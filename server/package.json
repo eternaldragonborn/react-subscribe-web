@@ -1,0 +1,47 @@
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "main": "./build/index.js",
+  "author": "Fafnir",
+  "license": "MIT",
+  "private": "true",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "body-parser": "^1.19.2",
+    "discord.js": "^13.6.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "log4js": "^6.4.6",
+    "luxon": "^2.3.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.4",
+    "pg": "^8.7.3",
+    "qs": "^6.10.3",
+    "redis": "^4.0.4",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.6"
+  },
+  "devDependencies": {
+    "@types/luxon": "^2.3.1",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^17.0.32",
+    "@types/react": "^18.0.5",
+    "concurrently": "^7.1.0",
+    "dotenv": "^16.0.0",
+    "esbuild": "^0.14.39",
+    "nodemon": "^2.0.15",
+    "typescript": "^4.6.4",
+    "wait-on": "^6.0.1"
+  },
+  "type": "module",
+  "scripts": {
+    "watch": "yarn concurrently --kill-others \"node ./esbuild.config.js\" \"nodemon ./build/index.js\"",
+    "dev": "set \"DEV_MODE=1\" && wait-on tcp:5432 tcp:6379 tcp:27017 && yarn watch",
+    "start": "node ./build/index.js",
+    "esbuild": "node ./esbuild.config.js 0"
+  },
+  "engines": {
+    "node": "^16.x"
+  }
+}

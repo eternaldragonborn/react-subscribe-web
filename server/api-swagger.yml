@@ -1,0 +1,44 @@
+openapi: '3.0.2'
+info:
+  title: 訂閱系統後端API
+  version: '1.0'
+servers:
+  - url: http://localhost/api
+
+components:
+  schemas:
+    SubscribeData:
+      type: object
+      properties:
+        artist:
+          type: string
+        id:
+          type: string
+        subscriber:
+          type: string
+        preview_url:
+          type: string
+        download_url:
+          type: string
+  securitySchemes:
+    user-token:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /test:
+    get:
+      responses:
+        '200':
+          description: OK
+  /data/overview:
+    get:
+      description: '取得所有訂閱資料'
+      parameters: []
+      responses:
+        '200':
+          description: OK
+
+security:
+  - bearer: []
