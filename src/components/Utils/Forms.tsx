@@ -15,10 +15,10 @@ import {
 import { ReactNode, useCallback, useRef, useState } from "react";
 import { State } from "../../constants/types";
 import { ErrorBoundary } from "./ErrorBoundary";
+
 interface SubmitResult {
   status: "success" | "error" | "warning" | undefined;
   action?: string;
-  // message?: string;
   reason?: string;
 }
 
@@ -30,6 +30,7 @@ interface FormDialogProps extends DialogProps {
   isSubmitting: boolean;
   onClose: () => void;
   useSubmitResult: State<SubmitResult>;
+  action?: ReactNode;
 }
 export const FormDialog = (props: FormDialogProps) => {
   const {
@@ -38,6 +39,7 @@ export const FormDialog = (props: FormDialogProps) => {
     submitForm,
     isSubmitting,
     useSubmitResult: [submitResult, setSubmitResult],
+    action,
     ...dialogProps
   } = props;
 
@@ -45,7 +47,9 @@ export const FormDialog = (props: FormDialogProps) => {
     <>
       <Dialog
         {...dialogProps}
-        onClose={onClose}
+        onClose={() => {
+          if (!isSubmitting) onClose(); // not allow to close the dialog when submitting
+        }}
         maxWidth="sm"
         fullWidth
         transitionDuration={dialogProps.transitionDuration ?? 350}
@@ -62,29 +66,33 @@ export const FormDialog = (props: FormDialogProps) => {
 
         <ErrorBoundary>{dialogProps.children}</ErrorBoundary>
 
-        <DialogActions>
-          <Button
-            type="button"
-            color="secondary"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            取消
-          </Button>
-          <LoadingButton
-            type="submit"
-            color="primary"
-            variant="contained"
-            onClick={submitForm}
-            loading={isSubmitting}
-            disabled={isSubmitting}
-          >
-            確定
-          </LoadingButton>
-        </DialogActions>
+        {action ? (
+          action
+        ) : (
+          <DialogActions>
+            <Button
+              type="button"
+              color="secondary"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
+              取消
+            </Button>
+            <LoadingButton
+              type="submit"
+              color="primary"
+              variant="contained"
+              onClick={submitForm}
+              loading={isSubmitting}
+              disabled={isSubmitting}
+            >
+              確定
+            </LoadingButton>
+          </DialogActions>
+        )}
       </Dialog>
 
-      <Snackbar
+      <Snackbar // result alert
         open={Boolean(submitResult.status)}
         autoHideDuration={5_000}
         onClose={() => setSubmitResult({ status: undefined })}

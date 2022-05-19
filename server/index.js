@@ -3,8 +3,7 @@ import Express from "express";
 import morgan from "morgan";
 import multer from "multer";
 import "reflect-metadata";
-import { bot, getdata, redis } from "./modules";
-import { logger } from "./modules";
+import { bot, getdata, logger, redis } from "./modules";
 import { mountRouter } from "./router";
 
 const app = Express();
@@ -19,7 +18,7 @@ app.use(parser.urlencoded({ extended: false }));
 app.use(multer().any()); // enable form/file
 app.use(Express.static("./build"));
 
-const port = process.env.PORT ?? 5000;
+const port = process.env.PORT ?? 80;
 app.listen(port, async () => {
   await redis.connect();
   await bot.login(process.env.DISCORD_TOKEN);

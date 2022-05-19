@@ -5,7 +5,7 @@ import {
   Typography,
 } from "@mui/material";
 import { ConfirmProvider } from "material-ui-confirm";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
 import {

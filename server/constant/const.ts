@@ -1,8 +1,5 @@
 import { Secret } from "jsonwebtoken";
 import { DateTime } from "luxon";
-import dotenv from "dotenv";
-
-if (process.env["DEV_MODE"]) dotenv.config({ path: "./.env.dev" });
 
 export const getTime = () => {
   const time = DateTime.now().setZone("Asia/Taipei");
