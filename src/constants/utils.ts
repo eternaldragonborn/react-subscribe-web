@@ -49,7 +49,8 @@ export const getFormData = (values: any) => {
 
 export const getRequestError: (error: any) => string = (error: any) => {
   if (error.response) {
-    if (error.response.data) return error.response.data;
+    if (error.response.status === 404) return "無效的請求網址";
+    else if (error.response.data) return error.response.data;
     else return "未知原因。";
   } else if (error.request) {
     return "伺服器無回應。";

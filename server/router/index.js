@@ -8,9 +8,10 @@ const publicPath = path.resolve(path.resolve("") + "/build");
  */
 const mountRouter = async (app) => {
   app.use("/api", api);
-  app.use("/subscribe-sys", (req, res) => {
-    res.sendFile(publicPath + "/index.html");
-  });
+  if (!process.env["REACT_MODE"])
+    app.use("/subscribe-sys", (req, res) => {
+      res.sendFile(publicPath + "/index.html");
+    });
 };
 
 export { mountRouter };

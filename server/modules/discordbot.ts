@@ -94,6 +94,8 @@ export async function createEmbed(
   color: ColorResolvable,
   user?: string,
 ) {
+  if (process.env.DEV_MODE) title += "(測試用)";
+
   const embed = new MessageEmbed()
     .setTitle(title)
     .setURL(siteURL) // pending

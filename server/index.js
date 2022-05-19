@@ -7,7 +7,7 @@ import { bot, getdata, logger, redis } from "./modules";
 import { mountRouter } from "./router";
 
 const app = Express();
-if (true) {
+if (process.env["DEV_MODE"]) {
   logger.debug("backend running in dev mode");
   app.use(morgan("dev"));
 }

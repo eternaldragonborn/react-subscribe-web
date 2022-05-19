@@ -29,7 +29,7 @@ const validationSchema = yup.object({
   ),
 });
 
-export function ModalEditArtist({ id }: { id: string }) {
+export default function ModalEditArtist({ id }: { id: string }) {
   const {
     useArtistEdit: [artistData, setArtistData],
   } = useContext(SubscriberPageContext);

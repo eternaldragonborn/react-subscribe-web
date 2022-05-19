@@ -29,7 +29,7 @@
     "start-dev-backend": "cd ./server && yarn dev",
     "start-react": "wait-on tcp:80 && yarn vite",
     "start": "yarn concurrently --kill-others \"yarn start-react\" \"yarn start-backend\"",
-    "dev": "set \"DEV_MODE=1\" && yarn concurrently --kill-others  \"yarn start-react\" \"yarn start-dev-backend\" && cls",
+    "dev": "set \"REACT_MODE=1\" && yarn concurrently --kill-others  \"yarn start-react\" \"yarn start-dev-backend\" && cls",
     "build": "vite build --mode production && cd ./server && yarn esbuild"
   },
   "proxy": "http://127.0.0.1:80",

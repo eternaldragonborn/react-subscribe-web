@@ -11,6 +11,7 @@ import {
 import {
   lazy,
   Suspense,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -19,15 +20,12 @@ import {
 import { useParams } from "react-router-dom";
 import { AuthContext, SubscriberPageContext } from "../constants";
 import { tableSortReducer } from "../reducers";
-import {
-  ModalArtistUpdate,
-  ModalEditArtist,
-  ModalEditUrl,
-  TableHeader,
-} from "./Subscriber";
+import { ModalEditUrl, TableHeader } from "./Subscriber";
 import { ErrorBoundary, TableLoading } from "./Utils";
 
 const ArtistTable = lazy(() => import("./Subscriber/TableBody"));
+const ModalArtistUpdate = lazy(() => import("./Subscriber/ModalUpdate"));
+const ModalEditArtist = lazy(() => import("./Subscriber/ModalEditArtist"));
 
 export default function SubscriberPage() {
   //#region declare
@@ -46,6 +44,10 @@ export default function SubscriberPage() {
   const [selected, setSelected] = useState([]);
   const useArtistEdit = useState({ type: null });
   const [, setArtistData] = useArtistEdit;
+  const urls = useCallback(
+    () => subscribeData?.subscribers[id],
+    [id, subscribeData],
+  );
   //#endregion
 
   //#region effects
@@ -86,18 +88,22 @@ export default function SubscriberPage() {
         <ErrorBoundary /* toolbox */>
           {loadStatus === "success" && user?.status !== "user" && (
             <Stack direction="row" spacing={1} sx={{ pb: 1 }}>
-              <ModalArtistUpdate id={id} />
+              {urls() && (
+                <Suspense>
+                  <ModalArtistUpdate id={id} />
 
-              <Button // add artist
-                color="success"
-                startIcon={<Add />}
-                onClick={() => setArtistData({ type: "add" })}
-              >
-                新增繪師
-              </Button>
+                  <Button // add artist
+                    color="success"
+                    startIcon={<Add />}
+                    onClick={() => setArtistData({ type: "add" })}
+                  >
+                    新增繪師
+                  </Button>
+                  <ModalEditArtist id={id} />
+                </Suspense>
+              )}
 
               <ModalEditUrl id={id} />
-              <ModalEditArtist id={id} />
             </Stack>
           )}
         </ErrorBoundary>

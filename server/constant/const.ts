@@ -6,7 +6,9 @@ export const getTime = () => {
   return time;
 };
 
-export const siteURL = process.env["SITE_URL"] + "/subscribe-sys";
+export const siteURL =
+  (process.env.REACT_MODE ? process.env["SITE_URL"] : "http://localhost") +
+  "/subscribe-sys";
 
 export const emojis = {
   book: "🐍",
@@ -32,7 +34,7 @@ export const manager = [
 
 // webhook
 const testWebhook = "928905146849689641";
-export const webhooks = process.env.DEBUG_MODE
+export const webhooks = process.env.DEV_MODE
   ? {
       subscribe: testWebhook,
       book: {

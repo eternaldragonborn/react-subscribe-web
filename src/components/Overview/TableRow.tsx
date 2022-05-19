@@ -171,7 +171,7 @@ export default function Row({
                 {"訂閱者："}
                 {user.status === "manager" ? (
                   <Link
-                    to={`/subscriber/${artist.id.slice(2, -1)}`}
+                    to={`/subscribe-sys/subscriber/${artist.id.slice(2, -1)}`}
                     component={RouterLink}
                   >
                     {artist.subscriber}

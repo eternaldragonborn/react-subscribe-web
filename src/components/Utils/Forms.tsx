@@ -16,11 +16,17 @@ import { ReactNode, useCallback, useRef, useState } from "react";
 import { State } from "../../constants/types";
 import { ErrorBoundary } from "./ErrorBoundary";
 
-interface SubmitResult {
-  status: "success" | "error" | "warning" | undefined;
-  action?: string;
-  reason?: string;
+interface RequestResult {
+  action: string;
 }
+interface ErrorResult extends RequestResult {
+  status: "error";
+  reason: string;
+}
+interface NormalResult extends RequestResult {
+  status: "warning" | "success";
+}
+type SubmitResult = ErrorResult | NormalResult | { status: undefined };
 
 function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
   const [submitResult, setSubmitResult] = useResult;
@@ -87,40 +93,47 @@ export const FormDialog = (props: FormDialogProps) => {
         TransitionComponent={dialogProps.TransitionComponent ?? Grow}
         disableEscapeKeyDown={isSubmitting}
       >
-        <DialogTitle>
-          <Box display="flex" alignItems="center">
-            <Typography sx={{ flexGrow: 1 }} variant="inherit" color="inherit">
-              {title}
-            </Typography>
-          </Box>
-        </DialogTitle>
+        {title && (
+          <DialogTitle>
+            <Box display="flex" alignItems="center">
+              <Typography
+                sx={{ flexGrow: 1 }}
+                variant="inherit"
+                color="inherit"
+              >
+                {title}
+              </Typography>
+            </Box>
+          </DialogTitle>
+        )}
 
         <ErrorBoundary>{dialogProps.children}</ErrorBoundary>
-
-        {action ? (
-          action
-        ) : (
-          <DialogActions>
-            <Button
-              type="button"
-              color="secondary"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              取消
-            </Button>
-            <LoadingButton
-              type="submit"
-              color="primary"
-              variant="contained"
-              onClick={submitForm}
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              確定
-            </LoadingButton>
-          </DialogActions>
-        )}
+        <DialogActions>
+          {action ? (
+            action
+          ) : (
+            <>
+              <Button
+                type="button"
+                color="secondary"
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
+                取消
+              </Button>
+              <LoadingButton
+                type="submit"
+                color="primary"
+                variant="contained"
+                onClick={submitForm}
+                loading={isSubmitting}
+                disabled={isSubmitting}
+              >
+                確定
+              </LoadingButton>
+            </>
+          )}
+        </DialogActions>
       </Dialog>
 
       {useSubmitResult && <ResultSnackbar useResult={useSubmitResult} />}

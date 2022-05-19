@@ -19,7 +19,7 @@ import { tableSortReducer } from "../reducers";
 import { TableHeader } from "./Overview";
 import { ErrorBoundary, TableLoading } from "./Utils";
 
-// const ModalDeleteUser = lazy(() => import("./Overview/ModalDeleteUser"));
+const ModalDeleteUser = lazy(() => import("./Overview/ModalDeleteUser"));
 const TableNotLogin = lazy(() => import("./Overview/TableNotLogin"));
 const UrlModal = lazy(() => import("./Overview/UrlModal"));
 const Row = lazy(() => import("./Overview/TableRow"));
@@ -52,7 +52,7 @@ export default function Overview() {
     <Container>
       <Stack direction="row" pb={1}>
         <Suspense>
-          {/* {user && user.status === "manager" && <ModalDeleteUser />} */}
+          {user && user.status === "manager" && <ModalDeleteUser />}
         </Suspense>
         <UrlModal useModalData={[modalData, setModalData]} />
       </Stack>

@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { Artist } from "./Artist";
 
-@Entity({ name: "subscribers" })
+@Entity({ name: process.env.DEV_MODE ? "subscribers_test" : "subscribers" })
 export class Subscriber {
   @PrimaryColumn("varchar", {
     length: 21,

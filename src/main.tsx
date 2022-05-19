@@ -1,8 +1,8 @@
 import { ThemeProvider } from "@mui/material";
 import { ConfirmProvider } from "material-ui-confirm";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, StrictMode, Suspense, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Outlet, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BackdropLoading, ErrorBoundary, Header } from "./components";
 import { apiRequest, AuthContext, SubscribeData, UserData } from "./constants";
 import "./styles/style.css";
@@ -14,28 +14,21 @@ const Authenticate = lazy(() => import("./components/Auth"));
 
 function Router() {
   return (
-    <>
-      <BrowserRouter>
-        <ErrorBoundary>
-          <Header />
-        </ErrorBoundary>
-
-        <ErrorBoundary>
-          <Suspense fallback={<BackdropLoading />}>
-            <Routes>
-              <Route path="/subscribe-sys">
-                <Route path="" element={<Overview />} />
-                <Route path="subscriber/:id" element={<SubscriberPage />} />
-                <Route path="authenticate" element={<Authenticate />} />
-                {/* TODO: 建議/問題回報 */}
-                {/* TODO: no match */}
-              </Route>
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </BrowserRouter>
-      <Outlet />
-    </>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <Suspense fallback={<BackdropLoading />}>
+          <Routes>
+            <Route path="/subscribe-sys" element={<Header />}>
+              <Route path="" element={<Overview />} />
+              <Route path="subscriber/:id" element={<SubscriberPage />} />
+              <Route path="authenticate" element={<Authenticate />} />
+              {/* TODO: 建議/問題回報 */}
+              {/* TODO: no match */}
+            </Route>
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
+    </BrowserRouter>
   );
 }
 
@@ -76,11 +69,11 @@ function Content() {
 
 const root = document.getElementById("root")!;
 createRoot(root).render(
-  <>
+  <StrictMode>
     <ThemeProvider theme={theme}>
       <ConfirmProvider>
         <Content />
       </ConfirmProvider>
     </ThemeProvider>
-  </>,
+  </StrictMode>,
 );

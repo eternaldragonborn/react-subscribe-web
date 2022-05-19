@@ -54,8 +54,8 @@ export function ModalEditUrl({ id }: { id: string }) {
   useEffect(() => {
     if (open)
       formik.setValues({
-        preview: url.preview_url,
-        download: url.download_url,
+        preview: url?.preview_url ?? "",
+        download: url?.download_url ?? "",
         id,
       });
   }, [open, url, id]);

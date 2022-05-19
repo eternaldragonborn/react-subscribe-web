@@ -1,42 +1,102 @@
 import { Delete } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   Autocomplete,
-  Dialog,
   DialogContent,
   DialogContentText,
   TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useFormik } from "formik";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import * as yup from "yup";
-import { AuthContext } from "../../constants";
+import { apiRequest, AuthContext, getRequestError } from "../../constants";
 import { FormDialog, useFormDialog } from "../Utils";
 
-type SubscriberOption = { name: string; id: string };
+type SubscriberOption = { name: string | undefined; id: string | undefined };
+const initialOption: SubscriberOption = { name: undefined, id: undefined };
 
-function ModalConfirm({}: {}) {
+function ModalConfirm({
+  subscriber,
+  submitForm,
+  isSubmitting,
+}: {
+  subscriber: string | undefined;
+  submitForm: () => Promise<void>;
+  isSubmitting: boolean;
+}) {
   const [open, setOpen] = useState(false);
+  const [confirmInput, setConfirmInput] = useState("");
+  const confirmString = useCallback(
+    () => `確認刪除訂閱者${subscriber}的資料`,
+    [subscriber],
+  );
   const onOpen = () => setOpen(true);
   const onClose = () => setOpen(false);
 
   return (
     <>
-      <Button onClick={onOpen}>確認</Button>
+      <LoadingButton
+        variant="contained"
+        disabled={!Boolean(subscriber)}
+        loading={isSubmitting}
+        onClick={onOpen}
+      >
+        確認
+      </LoadingButton>
 
-      <FormDialog open={open} onClose={onClose}>
-        <DialogContent></DialogContent>
+      <FormDialog
+        open={open}
+        onClose={onClose}
+        action={
+          <>
+            <Button type="button" color="secondary" onClick={onClose}>
+              取消
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              disabled={confirmInput !== confirmString()}
+              onClick={() => {
+                onClose();
+                submitForm();
+              }}
+            >
+              確定
+            </Button>
+          </>
+        }
+      >
+        <DialogContent>
+          <DialogContentText pb={2}>
+            為確認執行該操作，請在下方輸入<code>{confirmString()}</code>
+          </DialogContentText>
+
+          <TextField
+            label="確認訊息"
+            value={confirmInput}
+            onChange={(e) => setConfirmInput(e.target.value)}
+            required
+          />
+        </DialogContent>
       </FormDialog>
     </>
   );
 }
 
+const action = "刪除訂閱者";
+
 export default function ModalDeleteUser() {
   const {
-    useSubscribeData: [data],
+    useSubscribeData: [data, setData],
   } = useContext(AuthContext);
   const { open, onOpen, onClose, useSubmitResult } = useFormDialog();
   const [options, setOptions] = useState<SubscriberOption[]>([]);
+  const [selected, setSelected] = useState<SubscriberOption | null>(
+    initialOption,
+  );
   const formik = useFormik({
     initialValues: {
       subscriber: "",
@@ -45,12 +105,34 @@ export default function ModalDeleteUser() {
       subscriber: yup.string().required("請選擇一個目標"),
     }),
     onSubmit: async (values) => {
-      alert(JSON.stringify(values, null, 2));
+      const [, setResult] = useSubmitResult;
+      await apiRequest({ method: "DELETE", url: "/subscriber", data: values })
+        .then((res) => {
+          if (res.data) {
+            setSelected(initialOption);
+            setResult({ action, status: "success" });
+            setData({ ...res.data });
+          } else setResult({ action, status: "warning" });
+
+          onClose();
+        })
+        .catch((err) =>
+          setResult({ action, status: "error", reason: getRequestError(err) }),
+        );
     },
   });
+  const artists = useCallback(
+    () =>
+      data?.artists
+        .filter((artist) => artist.id === selected?.id)
+        .map((artist) => artist.artist),
+    [selected],
+  );
+  const theme = useTheme();
 
+  // options initialize
   useEffect(() => {
-    const options: SubscriberOption[] = [];
+    const options: SubscriberOption[] = [{ name: undefined, id: undefined }];
     for (let subscriber in data?.subscribers) {
       options.push({
         id: subscriber,
@@ -74,6 +156,18 @@ export default function ModalDeleteUser() {
         submitForm={formik.submitForm}
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
+        action={
+          <>
+            <Button color="secondary" onClick={onClose}>
+              取消
+            </Button>
+            <ModalConfirm
+              isSubmitting={formik.isSubmitting}
+              submitForm={formik.submitForm}
+              subscriber={selected?.name}
+            />
+          </>
+        }
       >
         <DialogContent>
           <DialogContentText pb={2}>
@@ -84,11 +178,13 @@ export default function ModalDeleteUser() {
           </DialogContentText>
 
           <Autocomplete
+            value={selected}
             onChange={(_, value) => {
+              setSelected(value);
               formik.setFieldValue("subscriber", value?.id);
             }}
             options={options}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.name ?? ""}
             renderOption={(props, option) => (
               <li {...props} value={option.id}>
                 {option.name}
@@ -107,6 +203,21 @@ export default function ModalDeleteUser() {
             clearOnEscape
             autoComplete
           />
+
+          <DialogContentText
+            pt={2}
+            display={artists()?.length ? "block" : "none"}
+          >
+            <Typography
+              fontWeight="bold"
+              color="red"
+              fontSize={theme.typography.fontSize + 2}
+            >
+              以下繪師資料也將被刪除：
+            </Typography>
+
+            <span style={{ fontWeight: "bold" }}>{artists()?.join("、")}</span>
+          </DialogContentText>
         </DialogContent>
       </FormDialog>
     </>

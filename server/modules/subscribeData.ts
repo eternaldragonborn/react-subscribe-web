@@ -43,7 +43,7 @@ async function convertSubscriberData(data: Subscriber) {
   const subscriber = await getUser(data.id);
   const name = getUserName(subscriber);
 
-  return { result, name };
+  return { ...result, name };
 }
 
 export async function getdata() {
@@ -52,8 +52,8 @@ export async function getdata() {
   try {
     const subscribers = await postgreDataSource.manager.find(Subscriber);
     for (let subscriber of subscribers) {
-      const { result, name } = await convertSubscriberData(subscriber);
-      userNames[subscriber.id] = name;
+      const result = await convertSubscriberData(subscriber);
+      userNames[subscriber.id] = result.name;
       data.subscribers[subscriber.id] = result;
     }
 
@@ -79,3 +79,5 @@ export async function loaddata() {
   if (!(await redis.exists("data"))) await getdata();
   return JSON.parse((await redis.get("data")) ?? "{}") as SubscribeData;
 }
+
+export async function checkUpdate() {}

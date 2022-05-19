@@ -53,7 +53,7 @@ const validSchema = yup.object().shape({
     .oneOf(Object.keys(StatusValues), "無效的選項"),
 });
 
-export function ModalArtistUpdate({ id }: { id: string }) {
+export default function ModalArtistUpdate({ id }: { id: string }) {
   const {
     useUser: [user],
     useSubscribeData: [data, setData],
@@ -137,6 +137,7 @@ export function ModalArtistUpdate({ id }: { id: string }) {
               >
                 <FormLabel>繪師：</FormLabel>
                 <Grid container columns={12} spacing={2}>
+                  {!artists.length && <Grid item>請先新增繪師</Grid>}
                   {artists.map((artist) => {
                     return (
                       <Grid item key={artist} xs={6} sm={4}>

@@ -10,7 +10,7 @@ import { UpdateStatus } from "../../types";
 import { getTime } from "../constant";
 import { Subscriber } from "./Subscriber";
 
-@Entity({ name: "artists" })
+@Entity({ name: process.env.DEV_MODE ? "artists_test" : "artists" })
 export class Artist {
   @BeforeInsert()
   createDates() {
