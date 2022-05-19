@@ -10,10 +10,10 @@ import {
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { AuthContext } from "../../constants/Contexts";
-import { IconHeader } from "../Utils";
+import { AuthContext } from "../constants/Contexts";
+import { IconHeader } from "./Utils";
 
-export function Authenticate() {
+export default function Authenticate() {
   const [searchParams] = useSearchParams();
   const {
     useUser: [, setUser],

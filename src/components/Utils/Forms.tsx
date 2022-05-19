@@ -22,14 +22,45 @@ interface SubmitResult {
   reason?: string;
 }
 
+function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
+  const [submitResult, setSubmitResult] = useResult;
+
+  return (
+    <Snackbar // result alert
+      open={Boolean(submitResult.status)}
+      autoHideDuration={5_000}
+      onClose={() => setSubmitResult({ status: undefined })}
+    >
+      <Alert
+        severity={submitResult.status}
+        onClose={() => setSubmitResult({ status: undefined })}
+      >
+        {submitResult.status === "error" && (
+          <>
+            <AlertTitle>{submitResult.action}失敗</AlertTitle>
+            原因：<strong>{submitResult.reason}</strong>
+          </>
+        )}
+        {submitResult.status === "success" && `${submitResult.action}成功`}
+        {submitResult.status === "warning" && (
+          <>
+            <AlertTitle>`${submitResult.action}成功`</AlertTitle>
+            更新資料失敗，查看新資料請重新整理頁面。
+          </>
+        )}
+      </Alert>
+    </Snackbar>
+  );
+}
+
 //#region FormDialog
 interface FormDialogProps extends DialogProps {
   title?: string;
   children: ReactNode;
-  submitForm: () => Promise<void>;
-  isSubmitting: boolean;
+  submitForm?: () => Promise<void>;
+  isSubmitting?: boolean;
   onClose: () => void;
-  useSubmitResult: State<SubmitResult>;
+  useSubmitResult?: State<SubmitResult>;
   action?: ReactNode;
 }
 export const FormDialog = (props: FormDialogProps) => {
@@ -38,7 +69,7 @@ export const FormDialog = (props: FormDialogProps) => {
     onClose,
     submitForm,
     isSubmitting,
-    useSubmitResult: [submitResult, setSubmitResult],
+    useSubmitResult,
     action,
     ...dialogProps
   } = props;
@@ -92,30 +123,7 @@ export const FormDialog = (props: FormDialogProps) => {
         )}
       </Dialog>
 
-      <Snackbar // result alert
-        open={Boolean(submitResult.status)}
-        autoHideDuration={5_000}
-        onClose={() => setSubmitResult({ status: undefined })}
-      >
-        <Alert
-          severity={submitResult.status}
-          onClose={() => setSubmitResult({ status: undefined })}
-        >
-          {submitResult.status === "error" && (
-            <>
-              <AlertTitle>{submitResult.action}失敗</AlertTitle>
-              原因：<strong>{submitResult.reason}</strong>
-            </>
-          )}
-          {submitResult.status === "success" && `${submitResult.action}成功`}
-          {submitResult.status === "warning" && (
-            <>
-              <AlertTitle>`${submitResult.action}成功`</AlertTitle>
-              更新資料失敗，查看新資料請重新整理頁面。
-            </>
-          )}
-        </Alert>
-      </Snackbar>
+      {useSubmitResult && <ResultSnackbar useResult={useSubmitResult} />}
     </>
   );
 };

@@ -7,7 +7,7 @@ import type {
   SortAction,
 } from "./types";
 
-interface UserData {
+export interface UserData {
   id: string;
   status: "user" | "manager" | "subscriber";
 }

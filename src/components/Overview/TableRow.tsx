@@ -95,7 +95,7 @@ function UrlContent(
   }
 }
 
-export function Row({
+export default function Row({
   artist,
   url,
   setModalData,

@@ -1,6 +1,7 @@
 import { createTheme, responsiveFontSizes } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
+const defaultTheme = createTheme();
 let theme = createTheme({
   palette: {
     secondary: { main: grey[600] },
@@ -10,6 +11,7 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           backdropFilter: "blur(4px)",
+          zIndex: defaultTheme.zIndex.tooltip + 1,
         },
       },
     },

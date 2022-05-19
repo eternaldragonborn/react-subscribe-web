@@ -8,25 +8,35 @@ import {
   TableBody,
   TableContainer,
 } from "@mui/material";
-import { useContext, useEffect, useReducer, useState } from "react";
+import {
+  lazy,
+  Suspense,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import { useParams } from "react-router-dom";
-import { AuthContext, SubscriberPageContext } from "../../constants";
-import { tableSortReducer } from "../../reducers";
-import { ErrorBoundary, TableLoading } from "../Utils";
-import { ModalEditArtist } from "./ModalEditArtist";
-import { ModalEditUrl } from "./ModalEditUrl";
-import { ModalArtistUpdate } from "./ModalUpdate";
-import ArtistsTable from "./TableBody";
-import { TableHeader } from "./TableHeader";
+import { AuthContext, SubscriberPageContext } from "../constants";
+import { tableSortReducer } from "../reducers";
+import {
+  ModalArtistUpdate,
+  ModalEditArtist,
+  ModalEditUrl,
+  TableHeader,
+} from "./Subscriber";
+import { ErrorBoundary, TableLoading } from "./Utils";
 
-export function SubscriberPage() {
+const ArtistTable = lazy(() => import("./Subscriber/TableBody"));
+
+export default function SubscriberPage() {
   //#region declare
   const id = `<@${useParams().id}>`;
   const {
     useUser: [user],
     useSubscribeData: [subscribeData],
   } = useContext(AuthContext);
-  /** @type {import("../../constants/types").State<import("../../constants/types").LoadStatus>} */
+  /** @type {import("../constants/types").State<import("../constants/types").LoadStatus>} */
   const [loadStatus, setLoadStatus] = useState("loading");
   const [sortState, sortDispatch] = useReducer(tableSortReducer, {
     data: [],
@@ -74,9 +84,10 @@ export function SubscriberPage() {
         }}
       >
         <ErrorBoundary /* toolbox */>
-          {loadStatus === "success" && (
+          {loadStatus === "success" && user?.status !== "user" && (
             <Stack direction="row" spacing={1} sx={{ pb: 1 }}>
               <ModalArtistUpdate id={id} />
+
               <Button // add artist
                 color="success"
                 startIcon={<Add />}
@@ -84,6 +95,7 @@ export function SubscriberPage() {
               >
                 新增繪師
               </Button>
+
               <ModalEditUrl id={id} />
               <ModalEditArtist id={id} />
             </Stack>
@@ -103,7 +115,9 @@ export function SubscriberPage() {
 
                 <TableBody>
                   {loadStatus === "success" ? (
-                    <ArtistsTable />
+                    <Suspense fallback={<TableLoading status={loadStatus} />}>
+                      <ArtistTable />
+                    </Suspense>
                   ) : (
                     <TableLoading status={loadStatus} />
                   )}
