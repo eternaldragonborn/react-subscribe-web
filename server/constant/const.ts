@@ -7,8 +7,9 @@ export const getTime = () => {
 };
 
 export const siteURL =
-  (process.env.REACT_MODE ? process.env["SITE_URL"] : "http://localhost") +
-  "/subscribe-sys";
+  (process.env.REACT_MODE || !process.env.DEV_MODE
+    ? process.env["SITE_URL"]
+    : "http://localhost") + "/subscribe-sys";
 
 export const emojis = {
   book: "🐍",

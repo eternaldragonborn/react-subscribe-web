@@ -40,6 +40,7 @@ try {
 // add artist
 artists
   .route("/")
+  // add artist
   .post(verifyForm, async (req, res, next) => {
     const form: FormArtist = req.body;
     const manager = postgreDataSource.manager;
@@ -197,7 +198,7 @@ artists
   })
 
   // delete artist
-  .delete(verifyIsmanager, async (req, res, next) => {
+  .delete(verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
     const manager = postgreDataSource.manager;
 

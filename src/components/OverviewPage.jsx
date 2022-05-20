@@ -52,7 +52,7 @@ export default function Overview() {
     <Container>
       <Stack direction="row" pb={1}>
         <Suspense>
-          {user && user.status === "manager" && <ModalDeleteUser />}
+          {user?.status === "manager" && subscribeData && <ModalDeleteUser />}
         </Suspense>
         <UrlModal useModalData={[modalData, setModalData]} />
       </Stack>

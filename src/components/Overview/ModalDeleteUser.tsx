@@ -193,10 +193,7 @@ export default function ModalDeleteUser() {
           autoComplete
         />
 
-        <DialogContentText
-          // pt={2}
-          display={artists()?.length ? "block" : "none"}
-        >
+        <DialogContentText display={artists()?.length ? "block" : "none"}>
           <Typography
             fontWeight="bold"
             color="red"

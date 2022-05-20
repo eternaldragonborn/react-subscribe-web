@@ -10,3 +10,9 @@
 - [ ] 檢查資料是否同步(subscribeData 新增最後更新時間)
 
 ### issue
+
+- [ ] 效能較差裝置優化
+  - [ ] RWD 總覽 table(以`screen.width`決定渲染哪一種)
+  - [ ] 關閉動畫
+    - https://mui.com/material-ui/customization/transitions/
+    - https://mui.com/material-ui/getting-started/faq/#how-can-i-disable-the-ripple-effect-globally

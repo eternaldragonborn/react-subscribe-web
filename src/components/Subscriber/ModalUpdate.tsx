@@ -163,13 +163,12 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
             <MenuItem value={"update"}>更新</MenuItem>
             <MenuItem value={"noupdate"}>本月無更新</MenuItem>
             <MenuItem value={"unsubscribe"}>取消訂閱</MenuItem>
-            {user.status === "manager" && (
-              <MenuItem value={"delete"}>刪除資料</MenuItem>
-            )}
+            <MenuItem value={"delete"}>刪除資料</MenuItem>
           </Select>
           <FormHelperText error>
             {formik.touched.status && formik.errors.status}
-            {formik.values.status === "delete" && "該動作無法復原，請再次確認"}
+            {formik.values.status === "delete" &&
+              "該動作無法復原，除非雲端中已無該繪師圖包，否則不建議刪除，請再次確認"}
           </FormHelperText>
         </FormControl>
 
