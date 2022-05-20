@@ -2,7 +2,6 @@ import { AddToDrive, Help } from "@mui/icons-material";
 import {
   Button,
   Checkbox,
-  DialogContent,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -10,9 +9,7 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  NativeSelect,
   Select,
-  Stack,
   TextField,
   Tooltip,
   Typography,
@@ -30,13 +27,7 @@ import {
   SubscriberPageContext,
   validateField,
 } from "../../constants";
-import {
-  ErrorBoundary,
-  FileUpload,
-  FormDialog,
-  RwdDisplay,
-  useFormDialog,
-} from "../Utils";
+import { FileUpload, FormDialog, useFormDialog } from "../Utils";
 
 const StatusValues: { [status: string]: number } = {
   update: 0,
@@ -128,105 +119,98 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
         submitForm={formik.submitForm}
         useSubmitResult={useSubmitResult}
       >
-        <ErrorBoundary>
-          <DialogContent>
-            <Stack direction="column" spacing={2}>
-              <FormControl // artists
-                required
-                error={Boolean(formik.errors.artist)}
-              >
-                <FormLabel>繪師：</FormLabel>
-                <Grid container columns={12} spacing={2}>
-                  {!artists.length && <Grid item>請先新增繪師</Grid>}
-                  {artists.map((artist) => {
-                    return (
-                      <Grid item key={artist} xs={6} sm={4}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              name="artist"
-                              value={artist}
-                              onChange={formik.handleChange}
-                              checked={formik.values.artist.includes(artist)}
-                            />
-                          }
-                          label={artist}
-                        />
-                      </Grid>
-                    );
-                  })}
+        <FormControl // artists
+          required
+          error={Boolean(formik.errors.artist)}
+        >
+          <FormLabel>繪師：</FormLabel>
+          <Grid container columns={12} spacing={2}>
+            {!artists.length && <Grid item>請先新增繪師</Grid>}
+            {artists.map((artist) => {
+              return (
+                <Grid item key={artist} xs={6} sm={4}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        name="artist"
+                        value={artist}
+                        onChange={formik.handleChange}
+                        checked={formik.values.artist.includes(artist)}
+                      />
+                    }
+                    label={artist}
+                  />
                 </Grid>
-                <FormHelperText error>{formik.errors.artist}</FormHelperText>
-              </FormControl>
+              );
+            })}
+          </Grid>
+          <FormHelperText error>{formik.errors.artist}</FormHelperText>
+        </FormControl>
 
-              <FormControl // status
-                required
-                error={formik.touched.status && Boolean(formik.errors.status)}
-              >
-                <InputLabel id="status-select-label">狀態</InputLabel>
-                <Select
-                  variant="filled"
-                  name="status"
-                  value={formik.values.status}
-                  onChange={formik.handleChange}
-                  label="狀態"
-                  labelId="status-select-label"
-                >
-                  <MenuItem value={"update"}>更新</MenuItem>
-                  <MenuItem value={"noupdate"}>本月無更新</MenuItem>
-                  <MenuItem value={"unsubscribe"}>取消訂閱</MenuItem>
-                  {user.status === "manager" && (
-                    <MenuItem value={"delete"}>刪除資料</MenuItem>
-                  )}
-                </Select>
-                <FormHelperText error>
-                  {formik.touched.status && formik.errors.status}
-                  {formik.values.status === "delete" &&
-                    "該動作無法復原，請再次確認"}
-                </FormHelperText>
-              </FormControl>
+        <FormControl // status
+          required
+          error={formik.touched.status && Boolean(formik.errors.status)}
+        >
+          <InputLabel id="status-select-label">狀態</InputLabel>
+          <Select
+            variant="filled"
+            name="status"
+            value={formik.values.status}
+            onChange={formik.handleChange}
+            label="狀態"
+            labelId="status-select-label"
+          >
+            <MenuItem value={"update"}>更新</MenuItem>
+            <MenuItem value={"noupdate"}>本月無更新</MenuItem>
+            <MenuItem value={"unsubscribe"}>取消訂閱</MenuItem>
+            {user.status === "manager" && (
+              <MenuItem value={"delete"}>刪除資料</MenuItem>
+            )}
+          </Select>
+          <FormHelperText error>
+            {formik.touched.status && formik.errors.status}
+            {formik.values.status === "delete" && "該動作無法復原，請再次確認"}
+          </FormHelperText>
+        </FormControl>
 
-              <TextField
-                label="備註"
-                name="mark"
-                value={formik.values.mark}
-                onChange={formik.handleChange}
-              />
+        <TextField
+          label="備註"
+          name="mark"
+          value={formik.values.mark}
+          onChange={formik.handleChange}
+        />
 
-              <TextField // file link
-                label={
-                  <Typography align="center">
-                    {"檔案連結"}
-                    <Tooltip title="檔案的直接下載連結，若有多個檔案可輸入多行">
-                      <Help fontSize="inherit" color="primary" />
-                    </Tooltip>
-                  </Typography>
-                }
-                multiline
-                name="file_link"
-                value={formik.values.file_link}
-                onChange={formik.handleChange}
-              />
+        <TextField // file link
+          label={
+            <Typography align="center">
+              {"檔案連結"}
+              <Tooltip title="檔案的直接下載連結，若有多個檔案可輸入多行">
+                <Help fontSize="inherit" color="primary" />
+              </Tooltip>
+            </Typography>
+          }
+          multiline
+          name="file_link"
+          value={formik.values.file_link}
+          onChange={formik.handleChange}
+        />
 
-              <FileUpload
-                label="附件(可多選，總大小限制5MB內)"
-                files={formik.values.attachments!}
-                onChange={async (files) =>
-                  await formik.setFieldValue("attachments", files, false)
-                }
-                multiple
-                sizeLimit={5 * 1024}
-                onError={useCallback(
-                  (error: string | undefined) =>
-                    formik.setFieldError("attachments", error),
-                  [],
-                )}
-                error={Boolean(formik.errors.attachments)}
-                helperText={formik.errors.attachments as string}
-              />
-            </Stack>
-          </DialogContent>
-        </ErrorBoundary>
+        <FileUpload
+          label="附件(可多選，總大小限制5MB內)"
+          files={formik.values.attachments!}
+          onChange={async (files) =>
+            await formik.setFieldValue("attachments", files, false)
+          }
+          multiple
+          sizeLimit={5 * 1024}
+          onError={useCallback(
+            (error: string | undefined) =>
+              formik.setFieldError("attachments", error),
+            [],
+          )}
+          error={Boolean(formik.errors.attachments)}
+          helperText={formik.errors.attachments as string}
+        />
       </FormDialog>
     </>
   );

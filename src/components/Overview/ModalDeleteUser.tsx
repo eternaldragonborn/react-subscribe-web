@@ -50,23 +50,18 @@ function ModalConfirm({
       <FormDialog
         open={open}
         onClose={onClose}
-        action={
-          <>
-            <Button type="button" color="secondary" onClick={onClose}>
-              取消
-            </Button>
-            <Button
-              type="submit"
-              color="primary"
-              disabled={confirmInput !== confirmString()}
-              onClick={() => {
-                onClose();
-                submitForm();
-              }}
-            >
-              確定
-            </Button>
-          </>
+        confirmButton={
+          <Button
+            type="submit"
+            color="primary"
+            disabled={confirmInput !== confirmString()}
+            onClick={() => {
+              onClose();
+              submitForm();
+            }}
+          >
+            確定
+          </Button>
         }
       >
         <DialogContent>
@@ -156,69 +151,62 @@ export default function ModalDeleteUser() {
         submitForm={formik.submitForm}
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
-        action={
-          <>
-            <Button color="secondary" onClick={onClose}>
-              取消
-            </Button>
-            <ModalConfirm
-              isSubmitting={formik.isSubmitting}
-              submitForm={formik.submitForm}
-              subscriber={selected?.name}
-            />
-          </>
+        confirmButton={
+          <ModalConfirm
+            isSubmitting={formik.isSubmitting}
+            submitForm={formik.submitForm}
+            subscriber={selected?.name}
+          />
         }
       >
-        <DialogContent>
-          <DialogContentText pb={2}>
-            <span style={{ fontWeight: "bold", color: "red" }}>
-              該動作無法復原
-            </span>
-            ，拔除訂閱者身分組即可禁止其瀏覽網址資訊且不需刪除資料，請再次確認是否需要刪除資料。
-          </DialogContentText>
+        <DialogContentText pb={2}>
+          <span style={{ fontWeight: "bold", color: "red" }}>
+            該動作無法復原
+          </span>
+          ，拔除訂閱者身分組即可禁止其瀏覽網址資訊且不需刪除資料，請再次確認是否需要刪除資料。
+        </DialogContentText>
 
-          <Autocomplete
-            value={selected}
-            onChange={(_, value) => {
-              setSelected(value);
-              formik.setFieldValue("subscriber", value?.id);
-            }}
-            options={options}
-            getOptionLabel={(option) => option.name ?? ""}
-            renderOption={(props, option) => (
-              <li {...props} value={option.id}>
-                {option.name}
-              </li>
-            )}
-            renderInput={(param) => (
-              <TextField
-                label="要刪除的訂閱者"
-                {...param}
-                name="subscrber"
-                required
-                error={Boolean(formik.errors.subscriber)}
-                helperText={formik.errors.subscriber}
-              />
-            )}
-            clearOnEscape
-            autoComplete
-          />
+        <Autocomplete
+          value={selected}
+          onChange={(_, value) => {
+            setSelected(value);
+            formik.setFieldValue("subscriber", value?.id);
+          }}
+          options={options}
+          getOptionLabel={(option) => option.name ?? ""}
+          renderOption={(props, option) => (
+            <li {...props} value={option.id}>
+              {option.name}
+            </li>
+          )}
+          renderInput={(param) => (
+            <TextField
+              label="要刪除的訂閱者"
+              {...param}
+              name="subscrber"
+              required
+              error={Boolean(formik.errors.subscriber)}
+              helperText={formik.errors.subscriber}
+            />
+          )}
+          clearOnEscape
+          autoComplete
+        />
 
-          <DialogContentText
-            pt={2}
-            display={artists()?.length ? "block" : "none"}
+        <DialogContentText
+          // pt={2}
+          display={artists()?.length ? "block" : "none"}
+        >
+          <Typography
+            fontWeight="bold"
+            color="red"
+            fontSize={theme.typography.fontSize + 2}
           >
-            <Typography
-              fontWeight="bold"
-              color="red"
-              fontSize={theme.typography.fontSize + 2}
-            >
-              以下繪師資料也將被刪除：
-            </Typography>
+            以下繪師資料也將被刪除：
+          </Typography>
 
-            <span style={{ fontWeight: "bold" }}>{artists()?.join("、")}</span>
-          </DialogContentText>
-        </DialogContent>
+          <span style={{ fontWeight: "bold" }}>{artists()?.join("、")}</span>
+        </DialogContentText>
       </FormDialog>
     </>
   );

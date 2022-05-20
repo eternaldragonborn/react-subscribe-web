@@ -2,7 +2,6 @@ import { Add, Remove } from "@mui/icons-material";
 import {
   Button,
   ButtonGroup,
-  DialogContent,
   DialogContentText,
   Stack,
   TextField,
@@ -14,7 +13,6 @@ import { FieldArtist, FormArtist } from "../../../types";
 import {
   apiRequest,
   AuthContext,
-  getFormData,
   getRequestError,
   SubscriberPageContext,
 } from "../../constants";
@@ -121,79 +119,73 @@ export default function ModalEditArtist({ id }: { id: string }) {
       }}
       open={open}
     >
-      <DialogContent>
-        <Stack direction="column" spacing={2}>
-          {artistData.type === "add" && (
-            <>
-              <DialogContentText>
-                點擊下方按鈕可新增或減少欄位
-              </DialogContentText>
-              <ButtonGroup size="small">
-                <Button // add field
-                  type="button"
-                  variant="contained"
-                  disabled={formik.values.artists.length >= 5}
-                  onClick={() => {
-                    formik.setFieldValue("artists", [
-                      ...formik.values.artists,
-                      { name: "", mark: "" } as FieldArtist,
-                    ]);
-                  }}
-                >
-                  <Add fontSize="small" />
-                </Button>
-                <Button // remove field
-                  type="button"
-                  variant="contained"
-                  color="secondary"
-                  disabled={formik.values.artists.length === 1}
-                  onClick={() => {
-                    const index = formik.values.artists.length - 1;
-                    formik.setFieldValue(
-                      "artists",
-                      formik.values.artists.slice(0, -1),
-                    );
-                    if (formik.touched.artists?.at(index))
-                      formik.setFieldTouched(`artists.${index - 1}`, false);
-                  }}
-                >
-                  <Remove fontSize="small" />
-                </Button>
-              </ButtonGroup>
-            </>
-          )}
+      {artistData.type === "add" && (
+        <>
+          <DialogContentText>點擊下方按鈕可新增或減少欄位</DialogContentText>
+          <ButtonGroup size="small">
+            <Button // add field
+              type="button"
+              variant="contained"
+              disabled={formik.values.artists.length >= 5}
+              onClick={() => {
+                formik.setFieldValue("artists", [
+                  ...formik.values.artists,
+                  { name: "", mark: "" } as FieldArtist,
+                ]);
+              }}
+            >
+              <Add fontSize="small" />
+            </Button>
+            <Button // remove field
+              type="button"
+              variant="contained"
+              color="secondary"
+              disabled={formik.values.artists.length === 1}
+              onClick={() => {
+                const index = formik.values.artists.length - 1;
+                formik.setFieldValue(
+                  "artists",
+                  formik.values.artists.slice(0, -1),
+                );
+                if (formik.touched.artists?.at(index))
+                  formik.setFieldTouched(`artists.${index - 1}`, false);
+              }}
+            >
+              <Remove fontSize="small" />
+            </Button>
+          </ButtonGroup>
+        </>
+      )}
 
-          {formik.values.artists.map((field, n) => {
-            const fieldTouched = formik.touched.artists?.at(n);
-            const fieldErrors = formik.errors.artists?.at(
-              n,
-            ) as FormikErrors<FieldArtist>;
+      {formik.values.artists.map((field, n) => {
+        const fieldTouched = formik.touched.artists?.at(n);
+        const fieldErrors = formik.errors.artists?.at(
+          n,
+        ) as FormikErrors<FieldArtist>;
 
-            return (
-              <Stack direction="row" spacing={0.5} key={n}>
-                <TextField
-                  name={`artists.${n}.name`}
-                  label="繪師名"
-                  required
-                  error={fieldTouched?.name && Boolean(fieldErrors?.name)}
-                  helperText={fieldTouched?.name && fieldErrors?.name}
-                  value={field.name}
-                  onChange={formik.handleChange}
-                />
+        return (
+          <Stack direction="row" spacing={0.5} key={n}>
+            <TextField
+              name={`artists.${n}.name`}
+              label="繪師名"
+              required
+              error={fieldTouched?.name && Boolean(fieldErrors?.name)}
+              helperText={fieldTouched?.name && fieldErrors?.name}
+              value={field.name}
+              onChange={formik.handleChange}
+            />
 
-                <TextField
-                  name={`artists.${n}.mark`}
-                  label="備註"
-                  error={Boolean(fieldErrors?.mark)}
-                  helperText={fieldErrors?.mark}
-                  value={field.mark}
-                  onChange={formik.handleChange}
-                />
-              </Stack>
-            );
-          })}
-        </Stack>
-      </DialogContent>
+            <TextField
+              name={`artists.${n}.mark`}
+              label="備註"
+              error={Boolean(fieldErrors?.mark)}
+              helperText={fieldErrors?.mark}
+              value={field.mark}
+              onChange={formik.handleChange}
+            />
+          </Stack>
+        );
+      })}
     </FormDialog>
   );
 }

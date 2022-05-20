@@ -6,16 +6,19 @@ import {
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
   DialogProps,
   DialogTitle,
   Grow,
   Snackbar,
+  Stack,
   Typography,
 } from "@mui/material";
-import { ReactNode, useCallback, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { State } from "../../constants/types";
 import { ErrorBoundary } from "./ErrorBoundary";
 
+//#region request result define
 interface RequestResult {
   action: string;
 }
@@ -27,20 +30,27 @@ interface NormalResult extends RequestResult {
   status: "warning" | "success";
 }
 type SubmitResult = ErrorResult | NormalResult | { status: undefined };
+//#endregion
 
 function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
   const [submitResult, setSubmitResult] = useResult;
+  const [open, setOpen] = useState(false);
+  const onClose = useCallback(() => {
+    setOpen(false);
+    setSubmitResult({ status: undefined });
+  }, [setSubmitResult]);
+
+  useEffect(() => {
+    if (submitResult.status) setOpen(true);
+  }, [submitResult]);
 
   return (
     <Snackbar // result alert
-      open={Boolean(submitResult.status)}
+      open={open}
       autoHideDuration={5_000}
-      onClose={() => setSubmitResult({ status: undefined })}
+      onClose={onClose}
     >
-      <Alert
-        severity={submitResult.status}
-        onClose={() => setSubmitResult({ status: undefined })}
-      >
+      <Alert severity={submitResult.status} onClose={onClose}>
         {submitResult.status === "error" && (
           <>
             <AlertTitle>{submitResult.action}失敗</AlertTitle>
@@ -67,6 +77,7 @@ interface FormDialogProps extends DialogProps {
   isSubmitting?: boolean;
   onClose: () => void;
   useSubmitResult?: State<SubmitResult>;
+  confirmButton?: ReactNode;
   action?: ReactNode;
 }
 export const FormDialog = (props: FormDialogProps) => {
@@ -77,6 +88,7 @@ export const FormDialog = (props: FormDialogProps) => {
     isSubmitting,
     useSubmitResult,
     action,
+    confirmButton,
     ...dialogProps
   } = props;
 
@@ -107,7 +119,14 @@ export const FormDialog = (props: FormDialogProps) => {
           </DialogTitle>
         )}
 
-        <ErrorBoundary>{dialogProps.children}</ErrorBoundary>
+        <ErrorBoundary>
+          <DialogContent>
+            <Stack direction="column" spacing={2}>
+              {dialogProps.children}
+            </Stack>
+          </DialogContent>
+        </ErrorBoundary>
+
         <DialogActions>
           {action ? (
             action
@@ -121,16 +140,19 @@ export const FormDialog = (props: FormDialogProps) => {
               >
                 取消
               </Button>
-              <LoadingButton
-                type="submit"
-                color="primary"
-                variant="contained"
-                onClick={submitForm}
-                loading={isSubmitting}
-                disabled={isSubmitting}
-              >
-                確定
-              </LoadingButton>
+              {confirmButton ? (
+                confirmButton
+              ) : (
+                <LoadingButton
+                  type="submit"
+                  color="primary"
+                  variant="contained"
+                  onClick={submitForm}
+                  loading={isSubmitting}
+                >
+                  確定
+                </LoadingButton>
+              )}
             </>
           )}
         </DialogActions>

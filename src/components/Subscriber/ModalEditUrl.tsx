@@ -1,11 +1,5 @@
 import { Add, Edit } from "@mui/icons-material";
-import {
-  Button,
-  DialogContent,
-  DialogContentText,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, DialogContentText, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import { useContext, useEffect } from "react";
 import * as yup from "yup";
@@ -80,41 +74,37 @@ export function ModalEditUrl({ id }: { id: string }) {
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
       >
-        <DialogContent>
-          <Stack direction="column" spacing={2} width={1} alignItems="center">
-            <DialogContentText>
-              若不同繪師有不同網址，可輸入多行，並於各行網址前加上
-              <code>`繪師名`：</code>
-              ，將繪師名以<Kbd>`</Kbd>包覆可有
-              <span className="artist-name">強調效果</span>。
-            </DialogContentText>
+        <DialogContentText>
+          若不同繪師有不同網址，可輸入多行，並於各行網址前加上
+          <code>`繪師名`：</code>
+          ，將繪師名以<Kbd>`</Kbd>包覆可有
+          <span className="artist-name">強調效果</span>。
+        </DialogContentText>
 
-            <TextField
-              label="預覽網址："
-              name="preview"
-              multiline
-              minRows={3}
-              maxRows={6}
-              onChange={formik.handleChange}
-              value={formik.values.preview}
-            />
+        <TextField
+          label="預覽網址："
+          name="preview"
+          multiline
+          minRows={3}
+          maxRows={6}
+          onChange={formik.handleChange}
+          value={formik.values.preview}
+        />
 
-            <TextField
-              label="下載網址："
-              name="download"
-              multiline
-              minRows={3}
-              maxRows={6}
-              onChange={formik.handleChange}
-              value={formik.values.download}
-              error={formik.touched.download && Boolean(formik.errors.download)}
-              helperText={
-                formik.touched.download && (formik.errors.download as String)
-              }
-              required
-            />
-          </Stack>
-        </DialogContent>
+        <TextField
+          label="下載網址："
+          name="download"
+          multiline
+          minRows={3}
+          maxRows={6}
+          onChange={formik.handleChange}
+          value={formik.values.download}
+          error={formik.touched.download && Boolean(formik.errors.download)}
+          helperText={
+            formik.touched.download && (formik.errors.download as String)
+          }
+          required
+        />
       </FormDialog>
     </>
   );
