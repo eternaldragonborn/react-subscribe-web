@@ -22,14 +22,6 @@ postgreDataSource
   .initialize()
   .then((datasource) => {
     logger.info("Postgre initialized");
-    // datasource
-    //   .getRepository(Artist)
-    //   .find()
-    //   .then((artists) =>
-    //     artists.forEach((artist) =>
-    //       console.log(`${artist.artist} : ${artist.subscriber?.id}`),
-    //     ),
-    //   );
   })
   .catch((e) => logger.error("Postgre initialize failed, " + e.message));
 

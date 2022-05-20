@@ -38,6 +38,7 @@ const testWebhook = "928905146849689641";
 export const webhooks = process.env.DEV_MODE
   ? {
       subscribe: testWebhook,
+      updateNotify: testWebhook,
       book: {
         subscriber: testWebhook,
         free: testWebhook,
@@ -49,6 +50,7 @@ export const webhooks = process.env.DEV_MODE
         "923607751828062208", // record in test guild
         "972086281943257088", // notification
       ],
+      updateNotify: "972086281943257088",
       book: {
         subscriber: "972086416513323048",
         free: "",

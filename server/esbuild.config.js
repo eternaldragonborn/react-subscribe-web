@@ -7,7 +7,7 @@ const watch = Number(args[2] ?? 1);
 esbuild
   .build({
     entryPoints: [
-      "index.js",
+      "index.ts",
       // "test.ts",
     ],
     define: {
@@ -30,5 +30,5 @@ esbuild
     external: ["./node_modules/*", "./build/*"],
     tsconfig: "./tsconfig.json",
   })
-  .then(() => console.log("watching..."));
+  .then(() => console.log("building..."));
 // }
