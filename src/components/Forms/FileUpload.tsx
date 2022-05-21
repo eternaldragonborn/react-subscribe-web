@@ -11,7 +11,7 @@ import { grey } from "@mui/material/colors";
 import _ from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../Utils/ErrorBoundary";
 
 interface FileUploadProps {
   files: File[];

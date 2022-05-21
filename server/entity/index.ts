@@ -13,7 +13,7 @@ const postgreDataSource = new DataSource({
         rejectUnauthorized: false,
       },
   entities: [Subscriber, Artist],
-  synchronize: true,
+  synchronize: process.env.DEV_MODE ? true : false,
   logging: false,
   cache: true,
 });

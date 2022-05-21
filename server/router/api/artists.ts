@@ -37,7 +37,6 @@ try {
 }
 */
 
-// add artist
 artists
   .route("/")
   // add artist

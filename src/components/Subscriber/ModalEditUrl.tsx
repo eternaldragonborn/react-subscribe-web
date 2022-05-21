@@ -5,7 +5,8 @@ import { useContext, useEffect } from "react";
 import * as yup from "yup";
 import { FormSubscriber } from "../../../types";
 import { apiRequest, AuthContext, getRequestError } from "../../constants";
-import { FormDialog, Kbd, useFormDialog } from "../Utils";
+import { FormDialog, useFormDialog } from "../Forms";
+import { Kbd } from "../Utils";
 
 export function ModalEditUrl({ id }: { id: string }) {
   const {

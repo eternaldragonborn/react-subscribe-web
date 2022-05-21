@@ -8,11 +8,9 @@ import {
   Typography,
   Zoom,
 } from "@mui/material";
-import { title } from "process";
 import { useEffect, useState } from "react";
 import { urlReplace } from "../../constants";
 import { State } from "../../constants/types";
-import { FormDialog } from "../Utils";
 
 interface UrlData {
   type: "預覽" | "下載";

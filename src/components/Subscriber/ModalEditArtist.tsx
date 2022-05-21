@@ -1,11 +1,4 @@
-import { Add, Remove } from "@mui/icons-material";
-import {
-  Button,
-  ButtonGroup,
-  DialogContentText,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
 import { useContext, useEffect } from "react";
 import * as yup from "yup";
@@ -16,7 +9,7 @@ import {
   getRequestError,
   SubscriberPageContext,
 } from "../../constants";
-import { FormDialog, useFormDialog } from "../Utils";
+import { FormDialog, FormFieldChange, useFormDialog } from "../Forms";
 
 const validationSchema = yup.object({
   artists: yup.array().of(
@@ -26,6 +19,7 @@ const validationSchema = yup.object({
     }),
   ),
 });
+const initialValue: FieldArtist = { name: "", mark: "" };
 
 export default function ModalEditArtist({ id }: { id: string }) {
   const {
@@ -74,8 +68,9 @@ export default function ModalEditArtist({ id }: { id: string }) {
     },
   });
 
+  // reset fields
   useEffect(() => {
-    if (artistData.type) {
+    if (artistData.type && artistData.type !== "delete") {
       formik.setTouched({ artists: [] });
 
       if (artistData.type === "edit") {
@@ -120,41 +115,14 @@ export default function ModalEditArtist({ id }: { id: string }) {
       open={open}
     >
       {artistData.type === "add" && (
-        <>
-          <DialogContentText>點擊下方按鈕可新增或減少欄位</DialogContentText>
-          <ButtonGroup size="small">
-            <Button // add field
-              type="button"
-              variant="contained"
-              disabled={formik.values.artists.length >= 5}
-              onClick={() => {
-                formik.setFieldValue("artists", [
-                  ...formik.values.artists,
-                  { name: "", mark: "" } as FieldArtist,
-                ]);
-              }}
-            >
-              <Add fontSize="small" />
-            </Button>
-            <Button // remove field
-              type="button"
-              variant="contained"
-              color="secondary"
-              disabled={formik.values.artists.length === 1}
-              onClick={() => {
-                const index = formik.values.artists.length - 1;
-                formik.setFieldValue(
-                  "artists",
-                  formik.values.artists.slice(0, -1),
-                );
-                if (formik.touched.artists?.at(index))
-                  formik.setFieldTouched(`artists.${index - 1}`, false);
-              }}
-            >
-              <Remove fontSize="small" />
-            </Button>
-          </ButtonGroup>
-        </>
+        <FormFieldChange
+          values={formik.values.artists}
+          fieldName="artists"
+          setFieldValue={formik.setFieldValue}
+          initialValue={initialValue}
+          touched={formik.touched.artists}
+          resetTouched={formik.setFieldTouched}
+        />
       )}
 
       {formik.values.artists.map((field, n) => {

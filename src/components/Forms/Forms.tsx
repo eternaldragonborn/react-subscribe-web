@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { State } from "../../constants/types";
-import { ErrorBoundary } from "./ErrorBoundary";
+import { ErrorBoundary } from "../Utils";
 
 //#region request result define
 interface RequestResult {
@@ -72,7 +72,6 @@ function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
 //#region FormDialog
 interface FormDialogProps extends DialogProps {
   title?: string;
-  children: ReactNode;
   submitForm?: () => Promise<void>;
   isSubmitting?: boolean;
   onClose: () => void;

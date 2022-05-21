@@ -15,6 +15,7 @@ export const Status: { [key: string]: UpdateStatus } = {
   // "delete":
 };
 
+//#region form format
 interface FormData {
   [field: string]: any;
 }
@@ -38,10 +39,19 @@ export interface FormUpdate extends FormData {
   attachments?: File[];
 }
 
-export interface FormUploadPackage extends FormData {}
+export interface FieldPackage {
+  author: string;
+  mark: string;
+  file_link: string;
+}
+export interface FormUploadPackage extends FormData {
+  packages: FieldPackage[];
+  files: File[];
+}
 
 export interface FormSubscriber extends FormData {
   id: string;
   preview?: string;
   download: string;
 }
+//#endregion

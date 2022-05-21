@@ -13,7 +13,7 @@ import { useFormik } from "formik";
 import { useCallback, useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { apiRequest, AuthContext, getRequestError } from "../../constants";
-import { FormDialog, useFormDialog } from "../Utils";
+import { FormDialog, useFormDialog } from "../Forms";
 
 type SubscriberOption = { name: string | undefined; id: string | undefined };
 const initialOption: SubscriberOption = { name: undefined, id: undefined };
@@ -194,15 +194,16 @@ export default function ModalDeleteUser() {
         />
 
         <DialogContentText display={artists()?.length ? "block" : "none"}>
-          <Typography
-            fontWeight="bold"
-            color="red"
-            fontSize={theme.typography.fontSize + 2}
-          >
-            以下繪師資料也將被刪除：
-          </Typography>
+          <span style={{ fontWeight: "bold" }}>
+            <span
+              style={{ color: "red", fontSize: theme.typography.fontSize + 2 }}
+            >
+              以下繪師資料也將被刪除：
+            </span>
+            <br />
 
-          <span style={{ fontWeight: "bold" }}>{artists()?.join("、")}</span>
+            {artists()?.join("、")}
+          </span>
         </DialogContentText>
       </FormDialog>
     </>

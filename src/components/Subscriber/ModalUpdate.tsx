@@ -1,4 +1,4 @@
-import { AddToDrive, Help } from "@mui/icons-material";
+import { DriveFolderUploadRounded, Help } from "@mui/icons-material";
 import {
   Button,
   Checkbox,
@@ -27,7 +27,7 @@ import {
   SubscriberPageContext,
   validateField,
 } from "../../constants";
-import { FileUpload, FormDialog, useFormDialog } from "../Utils";
+import { FileUpload, FormDialog, useFormDialog } from "../Forms";
 
 const StatusValues: { [status: string]: number } = {
   update: 0,
@@ -107,7 +107,7 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
 
   return (
     <>
-      <Button onClick={onOpen} startIcon={<AddToDrive />}>
+      <Button onClick={onOpen} startIcon={<DriveFolderUploadRounded />}>
         更新繪師
       </Button>
 

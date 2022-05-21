@@ -1,9 +1,9 @@
-import { defineConfig, splitVendorChunkPlugin } from "vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
 export default defineConfig(({ command, mode }) => {
   return {
-    plugins: [react(), splitVendorChunkPlugin()],
+    plugins: [react()],
     server: {
       proxy: {
         "/api": "http://localhost:80",
