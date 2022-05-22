@@ -10,6 +10,16 @@ export const verifyIsUser = async (
   else res.status(403).send("驗證錯誤，請重新登入網頁。");
 };
 
+export const verifyIsSubscriber = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const user = await verifyToken(req.headers);
+  if (user && user?.status !== "user") next();
+  else res.status(403).send("驗證錯誤，該動作限管理員可執行。");
+};
+
 export const verifyForm = async (
   req: Request,
   res: Response,

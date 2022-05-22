@@ -1,7 +1,13 @@
-import { GuildMember } from "discord.js";
+import {
+  GuildMember,
+  MessageAttachment,
+  MessageEmbed,
+  WebhookMessageOptions,
+} from "discord.js";
 import jwt from "jsonwebtoken";
 import { jwt_secret, roles, manager } from "../constant";
 import { getUser } from "./discordbot.js";
+import { logger } from "./logger";
 
 interface UserPayload extends jwt.JwtPayload {
   id: string;
@@ -32,9 +38,34 @@ export const verifyToken = async (
 
     return payload;
   } catch (err: any) {
-    console.log(err.message);
+    logger.error(err.message);
     return undefined;
   }
 };
 
-// export const setAttachments = (files: ) => {};
+export const getTokenId = (header: import("http").IncomingHttpHeaders) => {
+  const token = header.authorization?.split(" ")[1] ?? "";
+  const payload = jwt.verify(token, jwt_secret) as jwt.JwtPayload;
+
+  return payload.id;
+};
+
+type File = Express.Multer.File;
+export const setPayload = (
+  embed: MessageEmbed,
+  files: { [key: string]: File[] } | File[] | undefined,
+) => {
+  const payload: WebhookMessageOptions[] = [];
+
+  if (files?.length) {
+    const [image, ...attachments] = (files as File[]).map(
+      (file) => new MessageAttachment(file.buffer, file.originalname),
+    );
+    embed.setImage(`attachment://${image.name}`);
+    payload.push({ embeds: [embed], files: [image] });
+
+    if (attachments.length) payload.push({ content: " ", files: attachments });
+  } else payload.push({ embeds: [embed] });
+
+  return payload;
+};

@@ -39,7 +39,7 @@ export function FileUpload({
   bgcolor = grey[300],
   error,
   helperText,
-  sizeLimit, // KB
+  sizeLimit = 5 * 1024, // KB
   numLimit,
   onError,
 }: FileUploadProps) {
@@ -73,7 +73,9 @@ export function FileUpload({
         return;
       }
 
-      onChange([...files, ...selectedFiles]);
+      multiple
+        ? onChange([...files, ...selectedFiles])
+        : onChange(selectedFiles);
     },
     [files, onChange],
   );
@@ -118,7 +120,6 @@ export function FileUpload({
         <Stack direction="row" display="flex" alignItems="center">
           <TextField
             variant="filled"
-            disabled
             aria-readonly
             multiline
             required={required}
@@ -126,6 +127,8 @@ export function FileUpload({
             value={files.map((file) => file.name).join("\n")}
             error={error}
             sx={{ flexGrow: 1 }}
+            unselectable="on"
+            InputProps={{ readOnly: true }}
           />
           <Button
             size="small"

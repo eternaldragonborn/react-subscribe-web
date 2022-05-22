@@ -24,8 +24,7 @@ import { ModalEditUrl, TableHeader } from "./Subscriber";
 import { ErrorBoundary, TableLoading } from "./Utils";
 
 const ArtistTable = lazy(() => import("./Subscriber/TableBody"));
-const ModalArtistUpdate = lazy(() => import("./Subscriber/ModalUpdate"));
-const ModalEditArtist = lazy(() => import("./Subscriber/ModalEditArtist"));
+const Modals = lazy(() => import("./Subscriber/Modals"));
 
 export default function SubscriberPage() {
   //#region declare
@@ -90,7 +89,7 @@ export default function SubscriberPage() {
             <Stack direction="row" spacing={1} sx={{ pb: 1 }}>
               {urls() && (
                 <Suspense>
-                  <ModalArtistUpdate id={id} />
+                  <Modals id={id} />
 
                   <Button // add artist
                     color="success"
@@ -99,7 +98,6 @@ export default function SubscriberPage() {
                   >
                     新增繪師
                   </Button>
-                  <ModalEditArtist id={id} />
                 </Suspense>
               )}
 

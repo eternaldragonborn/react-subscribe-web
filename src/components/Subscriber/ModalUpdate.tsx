@@ -46,7 +46,6 @@ const validSchema = yup.object().shape({
 
 export default function ModalArtistUpdate({ id }: { id: string }) {
   const {
-    useUser: [user],
     useSubscribeData: [data, setData],
   } = useContext(AuthContext);
   const {

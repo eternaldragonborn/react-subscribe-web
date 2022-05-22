@@ -78,6 +78,7 @@ interface FormDialogProps extends DialogProps {
   useSubmitResult?: State<SubmitResult>;
   confirmButton?: ReactNode;
   action?: ReactNode;
+  contentDivider?: ReactNode;
 }
 export const FormDialog = (props: FormDialogProps) => {
   const {
@@ -88,6 +89,7 @@ export const FormDialog = (props: FormDialogProps) => {
     useSubmitResult,
     action,
     confirmButton,
+    contentDivider,
     ...dialogProps
   } = props;
 
@@ -120,7 +122,7 @@ export const FormDialog = (props: FormDialogProps) => {
 
         <ErrorBoundary>
           <DialogContent>
-            <Stack direction="column" spacing={2}>
+            <Stack direction="column" spacing={2} divider={contentDivider}>
               {dialogProps.children}
             </Stack>
           </DialogContent>

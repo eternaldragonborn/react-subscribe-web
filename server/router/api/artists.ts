@@ -19,23 +19,11 @@ import {
   getdata,
   logger,
   sendWebhook,
+  setPayload,
   verifyForm,
-  verifyIsmanager,
 } from "../../modules";
 
 const artists = Router();
-
-/*
-const manager = postgreDataSource.manager;
-
-try {
-
-  res.sendStatus(200);
-}catch(err: any) {
-  logger.error("failed.\n" + err);
-  res.status(405).send(err.message);
-}
-*/
 
 artists
   .route("/")
@@ -174,20 +162,7 @@ artists
       const embed = await createEmbed(title!, color!, form.id);
       embed.addFields(fields);
       //#endregion
-      const payload: WebhookMessageOptions[] = [{ embeds: [embed] }];
-
-      //#region attachment
-      if (req.files?.length) {
-        const [image, ...attachments] = (
-          req.files as Express.Multer.File[]
-        ).map((file) => {
-          return new MessageAttachment(file.buffer, file.originalname);
-        });
-        embed.setImage("attachment://" + image.name);
-        payload[0].files = [image];
-        if (attachments.length)
-          payload.push({ files: attachments, content: " " });
-      }
+      const payload = setPayload(embed, req.files);
       //#endregion
 
       await sendWebhook(webhooks.subscribe, "更新通知", payload, form.id);

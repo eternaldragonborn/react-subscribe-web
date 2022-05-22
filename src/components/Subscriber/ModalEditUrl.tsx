@@ -59,7 +59,7 @@ export function ModalEditUrl({ id }: { id: string }) {
     <>
       <Button
         startIcon={url ? <Edit /> : <Add />}
-        color={url ? "primary" : "success"}
+        color={url ? "info" : "success"}
         type="button"
         variant="contained"
         onClick={onOpen}

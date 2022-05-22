@@ -1,16 +1,19 @@
 import { Router } from "express";
-import { FormSubscriber } from "../../../types";
+import { FieldPackage, FormSubscriber } from "../../../types";
 import { webhooks } from "../../constant";
 import { Artist, postgreDataSource, Subscriber } from "../../entity";
 import {
   createEmbed,
   getdata,
+  getTokenId,
   getUser,
   getUserName,
   logger,
   sendWebhook,
+  setPayload,
   verifyForm,
   verifyIsmanager,
+  verifyIsSubscriber,
   verifyToken,
 } from "../../modules";
 
@@ -34,6 +37,14 @@ subscriber
       res.status(405).send("資料庫發生錯誤。");
       return;
     }
+
+    const embed = await createEmbed("網址變更/建檔", "GREEN", form.id);
+    if (form.preview) embed.addField("預覽網址", form.preview);
+    embed.addField("下載網址", form.download);
+
+    await sendWebhook(webhooks.updateNotify, "訂閱者資料變更", {
+      embeds: [embed],
+    }).catch((err) => logger.error("資料變更通知失敗\n" + err));
   })
 
   // delete subscriber
@@ -72,6 +83,46 @@ subscriber
       logger.error("資料刪除通知發生錯誤\n" + err);
     }
   });
+
+// package upload
+subscriber.post("/package", verifyIsSubscriber, async (req, res) => {
+  const id = `<@${getTokenId(req.headers)}>`;
+  const form: FieldPackage[] = JSON.parse(req.body.packages);
+
+  try {
+    const subscriber = await postgreDataSource.manager
+      .findOneOrFail(Subscriber, {
+        where: { id },
+        select: { preview: true, download: true },
+      })
+      .catch((err) => {
+        throw { message: "資料庫錯誤", error: err };
+      });
+
+    const embed = await createEmbed("圖包上傳", "NAVY", id);
+    form.forEach((data) => {
+      embed.addField("作者", data.author, Boolean(data.mark));
+      if (data.mark) embed.addField("備註", data.mark, true);
+      if (data.file_link) embed.addField("檔案連結", data.file_link);
+    });
+
+    if (subscriber.preview) embed.addField("雲端預覽", subscriber.preview);
+    embed.addField("雲端下載", subscriber.download);
+
+    const payload = setPayload(embed, req.files);
+
+    await sendWebhook(webhooks.subscribe, "圖包上傳", payload).catch(
+      (error) => {
+        throw { message: "bot錯誤", error };
+      },
+    );
+
+    res.sendStatus(200);
+  } catch (err: any) {
+    logger.error(`${err.message}\n${err.error}`);
+    res.status(405).send("上傳失敗，" + err.message);
+  }
+});
 
 subscriber.use(async (req, res) => {
   getdata()

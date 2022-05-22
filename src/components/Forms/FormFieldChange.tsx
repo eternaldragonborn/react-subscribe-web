@@ -43,7 +43,7 @@ export function FormFieldChange<T>({
             const index = values.length - 1;
             setFieldValue(fieldName, values.slice(0, -1));
             if (touched?.at(index))
-              resetTouched(`${fieldName}.${index - 1}`, false);
+              resetTouched(`${fieldName}.${index}`, false);
           }}
         >
           <Remove fontSize="small" />

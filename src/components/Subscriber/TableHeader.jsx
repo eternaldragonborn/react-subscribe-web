@@ -23,7 +23,10 @@ export function TableHeader() {
             indeterminate={
               selected.length > 0 && selected.length < sortState.data.length
             }
-            checked={selected.length === sortState.data.length}
+            checked={
+              Boolean(selected.length) &&
+              selected.length === sortState.data.length
+            }
             onClick={(e) =>
               e.target.checked
                 ? setSelected(sortState.data.map((d) => d.artist))
