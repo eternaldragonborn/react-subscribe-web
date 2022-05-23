@@ -173,6 +173,8 @@ export function FileUpload({
             {limitText}
           </FormHelperText>
         </Stack>
+
+        <FormHelperText error>{helperText}</FormHelperText>
       </Stack>
     </ErrorBoundary>
   );

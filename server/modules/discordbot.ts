@@ -1,7 +1,6 @@
 import {
   Client,
   ColorResolvable,
-  EmbedFieldData,
   GuildMember,
   ImageURLOptions,
   MessageEmbed,
@@ -9,7 +8,7 @@ import {
   WebhookMessageOptions,
 } from "discord.js";
 import _ from "lodash";
-import { getTime, guilds, siteURL } from "../constant";
+import { defaultAvatar, getTime, guilds, siteURL } from "../constant";
 import { logger } from "./logger";
 
 const bot = new Client({ intents: [32767] });
@@ -36,7 +35,6 @@ export function getUserName(user: User | GuildMember | undefined) {
   else return (user as User).username ?? "unknown";
 }
 
-const defaultAvatar = "https://i.imgur.com/7nVzfbf.png";
 const ImageURLOption: ImageURLOptions = { dynamic: true, format: "jpeg" };
 function hookOption(name: string, user?: User | GuildMember | undefined) {
   const webhookOptions: WebhookMessageOptions = {

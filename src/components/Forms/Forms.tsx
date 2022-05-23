@@ -28,6 +28,7 @@ interface ErrorResult extends RequestResult {
 }
 interface NormalResult extends RequestResult {
   status: "warning" | "success";
+  message?: string;
 }
 type SubmitResult = ErrorResult | NormalResult | { status: undefined };
 //#endregion
@@ -61,7 +62,9 @@ function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
         {submitResult.status === "warning" && (
           <>
             <AlertTitle>`${submitResult.action}成功`</AlertTitle>
-            更新資料失敗，查看新資料請重新整理頁面。
+            {submitResult.message
+              ? submitResult.message
+              : "更新資料失敗，查看新資料請重新整理頁面。"}
           </>
         )}
       </Alert>
@@ -79,20 +82,22 @@ interface FormDialogProps extends DialogProps {
   confirmButton?: ReactNode;
   action?: ReactNode;
   contentDivider?: ReactNode;
+  spacing?: number;
+  disableSubmit?: boolean;
 }
-export const FormDialog = (props: FormDialogProps) => {
-  const {
-    title,
-    onClose,
-    submitForm,
-    isSubmitting,
-    useSubmitResult,
-    action,
-    confirmButton,
-    contentDivider,
-    ...dialogProps
-  } = props;
-
+export const FormDialog = ({
+  title,
+  onClose,
+  submitForm,
+  isSubmitting,
+  useSubmitResult,
+  action,
+  confirmButton,
+  contentDivider,
+  spacing = 2,
+  disableSubmit = false,
+  ...dialogProps
+}: FormDialogProps) => {
   return (
     <>
       <Dialog
@@ -122,7 +127,11 @@ export const FormDialog = (props: FormDialogProps) => {
 
         <ErrorBoundary>
           <DialogContent>
-            <Stack direction="column" spacing={2} divider={contentDivider}>
+            <Stack
+              direction="column"
+              spacing={spacing}
+              divider={contentDivider}
+            >
               {dialogProps.children}
             </Stack>
           </DialogContent>
@@ -150,6 +159,7 @@ export const FormDialog = (props: FormDialogProps) => {
                   variant="contained"
                   onClick={submitForm}
                   loading={isSubmitting}
+                  disabled={disableSubmit}
                 >
                   確定
                 </LoadingButton>

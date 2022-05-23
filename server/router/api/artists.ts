@@ -5,6 +5,7 @@ import {
   WebhookMessageOptions,
 } from "discord.js";
 import { Router } from "express";
+import multer from "multer";
 import {
   FormArtist,
   FormUpdate,
@@ -100,76 +101,80 @@ artists
   })
 
   // update artist
-  .notify(verifyForm, async (req, res, next) => {
-    const form: FormUpdate = req.body;
-    const manager = postgreDataSource.manager;
-    let status = Status[form.status];
+  .notify(
+    verifyForm,
+    multer().array("attachments[]"),
+    async (req, res, next) => {
+      const form: FormUpdate = req.body;
+      const manager = postgreDataSource.manager;
+      let status = Status[form.status];
 
-    try {
-      await manager
-        .createQueryBuilder()
-        .update(Artist)
-        .where("artist IN (:...artistNames)", { artistNames: form.artist })
-        .set({
-          lastUpdateTime: getTime().toJSDate(),
-          status: status,
-        })
-        .execute();
-      next();
-    } catch (err: any) {
-      logger.error("繪師更新時發生錯誤\n" + err);
-      res.status(405).send("資料庫發生錯誤。");
-      return;
-    }
-
-    // notification
-    try {
-      //#region embed
-      const fields: EmbedFieldData[] = [
-        {
-          name: "繪師",
-          value: form.artist.map((d) => `\`${d}\``).join("\n"),
-          inline: Boolean(form.mark),
-        },
-      ];
-      if (form.mark)
-        fields.push({ name: "備註", value: form.mark, inline: true });
-      if (form.file_link)
-        fields.push({ name: "檔案連結", value: form.file_link });
-
-      let title: string, color: ColorResolvable;
-      switch (status) {
-        case UpdateStatus.normal:
-          const subscriber = await manager.findOneOrFail(Subscriber, {
-            select: { preview: true, download: true },
-            where: { id: form.id },
-          });
-          if (subscriber.preview)
-            fields.push({ name: "預覽", value: subscriber.preview });
-          fields.push({ name: "下載", value: subscriber.download });
-          title = "繪師更新";
-          color = "BLUE";
-          break;
-        case UpdateStatus.noUpdate:
-          title = "繪師停更";
-          color = "DARK_GREY";
-          break;
-        case UpdateStatus.unSubscribed:
-          title = "繪師取消訂閱";
-          color = "DARK_RED";
-          break;
+      try {
+        await manager
+          .createQueryBuilder()
+          .update(Artist)
+          .where("artist IN (:...artistNames)", { artistNames: form.artist })
+          .set({
+            lastUpdateTime: getTime().toJSDate(),
+            status: status,
+          })
+          .execute();
+        next();
+      } catch (err: any) {
+        logger.error("繪師更新時發生錯誤\n" + err);
+        res.status(405).send("資料庫發生錯誤。");
+        return;
       }
-      const embed = await createEmbed(title!, color!, form.id);
-      embed.addFields(fields);
-      //#endregion
-      const payload = setPayload(embed, req.files);
-      //#endregion
 
-      await sendWebhook(webhooks.subscribe, "更新通知", payload, form.id);
-    } catch (err) {
-      logger.error("進行更新通知時發生錯誤\n" + err);
-    }
-  })
+      // notification
+      try {
+        //#region embed
+        const fields: EmbedFieldData[] = [
+          {
+            name: "繪師",
+            value: form.artist.map((d) => `\`${d}\``).join("\n"),
+            inline: Boolean(form.mark),
+          },
+        ];
+        if (form.mark)
+          fields.push({ name: "備註", value: form.mark, inline: true });
+        if (form.file_link)
+          fields.push({ name: "檔案連結", value: form.file_link });
+
+        let title: string, color: ColorResolvable;
+        switch (status) {
+          case UpdateStatus.normal:
+            const subscriber = await manager.findOneOrFail(Subscriber, {
+              select: { preview: true, download: true },
+              where: { id: form.id },
+            });
+            if (subscriber.preview)
+              fields.push({ name: "預覽", value: subscriber.preview });
+            fields.push({ name: "下載", value: subscriber.download });
+            title = "繪師更新";
+            color = "BLUE";
+            break;
+          case UpdateStatus.noUpdate:
+            title = "繪師停更";
+            color = "DARK_GREY";
+            break;
+          case UpdateStatus.unSubscribed:
+            title = "繪師取消訂閱";
+            color = "DARK_RED";
+            break;
+        }
+        const embed = await createEmbed(title!, color!, form.id);
+        embed.addFields(fields);
+        //#endregion
+        const payload = setPayload(embed, req.files);
+        //#endregion
+
+        await sendWebhook(webhooks.subscribe, "更新通知", payload, form.id);
+      } catch (err) {
+        logger.error("進行更新通知時發生錯誤\n" + err);
+      }
+    },
+  )
 
   // delete artist
   .delete(verifyForm, async (req, res, next) => {
@@ -206,14 +211,6 @@ artists.use(async (req, res) => {
       logger.error(`更新資料錯誤。\n${err}`);
       res.sendStatus(200);
     });
-});
-
-// upload package
-artists.post("/package", verifyForm, (req, res) => {
-  const form: FormUploadPackage = req.body;
-
-  console.log(JSON.stringify(form, null, 2));
-  res.sendStatus(200);
 });
 
 export { artists };

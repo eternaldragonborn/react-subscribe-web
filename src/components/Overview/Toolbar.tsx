@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { AuthContext } from "../../constants";
+import { ModalBookUpload } from "./ModalBookUpload";
 import { ModalPackUpload } from "./ModalPackUpload";
 
 export default function Toolbar() {
@@ -8,5 +9,10 @@ export default function Toolbar() {
     useSubscribeData: [data],
   } = useContext(AuthContext);
 
-  return <>{data.subscribers[`<@${user.id}>`] && <ModalPackUpload />}</>;
+  return (
+    <>
+      {data.subscribers[`<@${user.id}>`] && <ModalPackUpload />}
+      <ModalBookUpload />
+    </>
+  );
 }

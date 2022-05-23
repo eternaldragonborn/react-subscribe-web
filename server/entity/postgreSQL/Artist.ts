@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from "typeorm";
-import { UpdateStatus } from "../../types";
-import { getTime } from "../constant";
+import { UpdateStatus } from "../../../types";
+import { getTime } from "../../constant";
 import { Subscriber } from "./Subscriber";
 
 @Entity({ name: process.env.DEV_MODE ? "artists_test" : "artists" })

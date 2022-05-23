@@ -54,7 +54,7 @@ export default function Overview() {
       <Stack direction="row" pb={1} spacing={1}>
         <Suspense>
           {user?.status === "manager" && subscribeData && <ModalDeleteUser />}
-          {user && user?.status !== "user" && <Toolbar />}
+          {subscribeData && user?.status !== "user" && <Toolbar />}
         </Suspense>
         <UrlModal useModalData={[modalData, setModalData]} />
       </Stack>

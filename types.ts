@@ -49,6 +49,17 @@ export interface FormUploadPackage extends FormData {
   files: File[];
 }
 
+export interface FieldBook {
+  author: string;
+  title: string;
+  url: string;
+  mark: string;
+  files: File[];
+}
+export interface FormBook {
+  books: FieldBook[];
+}
+
 export interface FormSubscriber extends FormData {
   id: string;
   preview?: string;

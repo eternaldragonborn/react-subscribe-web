@@ -30,7 +30,8 @@
     "start-react": "wait-on tcp:80 && yarn vite",
     "start": "yarn concurrently --kill-others \"yarn start-react\" \"yarn start-backend\"",
     "dev": "set \"REACT_MODE=1\" && yarn concurrently --kill-others  \"yarn start-react\" \"yarn start-dev-backend\" && cls",
-    "build": "vite build --mode production && cd ./server && yarn esbuild"
+    "build": "vite build --mode production && cd ./server && yarn esbuild",
+    "typeorm": "yarn typeorm-ts-node-commonjs"
   },
   "proxy": "http://127.0.0.1:80",
   "eslintConfig": {
@@ -58,6 +59,7 @@
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
     "concurrently": "^7.1.0",
+    "ts-node": "^10.8.0",
     "wait-on": "^6.0.1"
   }
 }

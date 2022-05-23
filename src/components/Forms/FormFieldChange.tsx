@@ -1,5 +1,5 @@
 import { Add, Remove } from "@mui/icons-material";
-import { DialogContentText, ButtonGroup, Button } from "@mui/material";
+import { DialogContentText, ButtonGroup, Button, Stack } from "@mui/material";
 import { FormikTouched } from "formik";
 
 export function FormFieldChange<T>({
@@ -10,6 +10,8 @@ export function FormFieldChange<T>({
   touched,
   resetTouched,
   maxField,
+  onAdd,
+  onRemove,
 }: {
   values: T[];
   fieldName: string;
@@ -18,16 +20,18 @@ export function FormFieldChange<T>({
   touched: FormikTouched<T>[] | undefined;
   resetTouched: (field: string, touched: boolean) => Promise<any>;
   maxField?: number;
+  onAdd?: () => void;
+  onRemove?: () => void;
 }) {
   return (
-    <>
-      <DialogContentText>點擊下方按鈕可新增或減少欄位</DialogContentText>
+    <Stack direction="row" spacing={1}>
       <ButtonGroup size="small">
         <Button // add field
           type="button"
           variant="contained"
           disabled={values.length >= (maxField ?? 5)}
           onClick={() => {
+            if (onAdd) onAdd();
             setFieldValue(fieldName, [...values, initialValue]);
           }}
         >
@@ -40,6 +44,7 @@ export function FormFieldChange<T>({
           color="secondary"
           disabled={values.length === 1}
           onClick={() => {
+            if (onRemove) onRemove();
             const index = values.length - 1;
             setFieldValue(fieldName, values.slice(0, -1));
             if (touched?.at(index))
@@ -49,6 +54,7 @@ export function FormFieldChange<T>({
           <Remove fontSize="small" />
         </Button>
       </ButtonGroup>
-    </>
+      <DialogContentText>點擊左方按鈕可新增或減少欄位</DialogContentText>
+    </Stack>
   );
 }

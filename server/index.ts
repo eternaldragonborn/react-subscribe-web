@@ -2,7 +2,6 @@ import parser from "body-parser";
 import Express from "express";
 import { DateTime } from "luxon";
 import morgan from "morgan";
-import multer from "multer";
 import "reflect-metadata";
 import { getTime } from "./constant";
 import { bot, checkUpdate, getdata, logger, redis } from "./modules";
@@ -17,7 +16,6 @@ if (process.env["DEV_MODE"]) {
 app.set("trust proxy", 1);
 app.use(parser.json()); // enable urlencoding
 app.use(parser.urlencoded({ extended: false }));
-app.use(multer().any()); // enable form/file
 app.use(Express.static("./build"));
 
 const port = process.env.PORT ?? 80;

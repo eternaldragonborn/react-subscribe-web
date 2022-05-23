@@ -1,9 +1,10 @@
+import mongoose from "mongoose";
 import { DataSource } from "typeorm";
 import { databaseConfig } from "../constant";
 import { logger } from "../modules";
-import { Artist } from "./Artist";
-import { Subscriber } from "./Subscriber";
+import { Artist, Subscriber } from "./postgreSQL";
 
+//#region postgreSQL
 const postgreDataSource = new DataSource({
   ...databaseConfig.postgre,
   type: "postgres",
@@ -21,10 +22,22 @@ const postgreDataSource = new DataSource({
 postgreDataSource
   .initialize()
   .then((datasource) => {
-    logger.info("Postgre initialized");
+    logger.info("PostgreSQL initialized");
   })
-  .catch((e) => logger.error("Postgre initialize failed, " + e.message));
+  .catch((e) => logger.error("PostgreSQL initialize failed, " + e.message));
+//#endregion
 
-export * from "./Artist";
-export * from "./Subscriber";
+//#region mongoDB
+mongoose
+  .connect(process.env.MONGO_URI!, databaseConfig.mongo)
+  .then((client) => {
+    logger.info("mongodb connected");
+  })
+  .catch((err) => {
+    logger.error("connect to mongodb failed, " + err.message);
+  });
+//#endregion
+
+export * from "./mongoDB";
+export * from "./postgreSQL";
 export { postgreDataSource };

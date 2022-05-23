@@ -1,7 +1,7 @@
 import { Add, Edit } from "@mui/icons-material";
 import { Button, DialogContentText, TextField } from "@mui/material";
 import { useFormik } from "formik";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import * as yup from "yup";
 import { FormSubscriber } from "../../../types";
 import { apiRequest, AuthContext, getRequestError } from "../../constants";
@@ -17,8 +17,8 @@ export function ModalEditUrl({ id }: { id: string }) {
     useFormDialog<HTMLTextAreaElement>();
   const formik = useFormik<FormSubscriber>({
     initialValues: {
-      preview: url?.preview_url ?? "",
-      download: url?.download_url ?? "",
+      preview: "",
+      download: "",
       id: id,
     },
     onSubmit: async (values) => {
@@ -45,6 +45,13 @@ export function ModalEditUrl({ id }: { id: string }) {
       download: yup.string().required("下載網址不可為空"),
     }),
   });
+
+  const notDirty = useCallback(() => {
+    const values = formik.values;
+    return (
+      values.preview === url.preview_url && values.download === url.download_url
+    );
+  }, [url, formik.values]);
 
   useEffect(() => {
     if (open)
@@ -74,6 +81,7 @@ export function ModalEditUrl({ id }: { id: string }) {
         submitForm={formik.submitForm}
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
+        disableSubmit={notDirty()}
       >
         <DialogContentText>
           若不同繪師有不同網址，可輸入多行，並於各行網址前加上

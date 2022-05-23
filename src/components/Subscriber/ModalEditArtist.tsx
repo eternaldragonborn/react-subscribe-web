@@ -1,6 +1,6 @@
 import { Stack, TextField } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import * as yup from "yup";
 import { FieldArtist, FormArtist } from "../../../types";
 import {
@@ -68,6 +68,15 @@ export default function ModalEditArtist({ id }: { id: string }) {
     },
   });
 
+  const isDirty = useCallback(() => {
+    if (artistData.type === "edit") {
+      const values = formik.values.artists[0];
+      return (
+        values.name !== artistData.artist || values.mark !== artistData.mark
+      );
+    } else return true;
+  }, [artistData, formik.values.artists[0]]);
+
   // reset fields
   useEffect(() => {
     if (artistData.type && artistData.type !== "delete") {
@@ -113,6 +122,7 @@ export default function ModalEditArtist({ id }: { id: string }) {
         setArtistData({ type: null });
       }}
       open={open}
+      disableSubmit={!isDirty()}
     >
       {artistData.type === "add" && (
         <FormFieldChange

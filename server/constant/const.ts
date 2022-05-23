@@ -1,5 +1,12 @@
 import { Secret } from "jsonwebtoken";
 import { DateTime } from "luxon";
+import multer from "multer";
+
+const DEV_MODE = process.env.DEV_MODE;
+
+export const upload = multer();
+
+export const defaultAvatar = "https://i.imgur.com/7nVzfbf.png";
 
 export const getTime = () => {
   const time = DateTime.now().setZone("Asia/Taipei");
@@ -7,7 +14,7 @@ export const getTime = () => {
 };
 
 export const siteURL =
-  (process.env.REACT_MODE || !process.env.DEV_MODE
+  (process.env.REACT_MODE || !DEV_MODE
     ? process.env["SITE_URL"]
     : "http://localhost") + "/subscribe-sys";
 
@@ -35,7 +42,7 @@ export const manager = [
 
 // webhook
 const testWebhook = "928905146849689641";
-export const webhooks = process.env.DEV_MODE
+export const webhooks = DEV_MODE
   ? {
       subscribe: testWebhook,
       updateNotify: testWebhook,
@@ -61,6 +68,7 @@ export const webhooks = process.env.DEV_MODE
 //#region env
 export const jwt_secret = process.env.JWT_SECRET as Secret;
 
+//#region database
 export const databaseConfig = {
   redis: {
     url: "redis://" + process.env["REDIS_HOST"],
@@ -72,5 +80,13 @@ export const databaseConfig = {
     password: process.env["SQL_PASSWD"],
     database: process.env["SQL_DB"],
   },
+  mongo: {
+    dbName: "bot-data",
+    user: "EternalDragonborn",
+    pass: process.env.MONGO_PWD,
+    authSource: DEV_MODE ? undefined : "admin",
+    ssl: !Boolean(DEV_MODE),
+  },
 };
+//#endregion
 //#endregion
