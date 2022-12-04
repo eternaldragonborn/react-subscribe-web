@@ -27,4 +27,4 @@ yarn-debug.log*
 yarn-error.log*
 node_modules
 server/.gitignore
-server/build/
+server/build
