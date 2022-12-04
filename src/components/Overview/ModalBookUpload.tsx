@@ -8,20 +8,22 @@ import {
   DialogContentText,
   IconButton,
   LinearProgress,
+  Slide,
   Stack,
   TextField,
 } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { TransitionGroup } from "react-transition-group";
 import * as yup from "yup";
 import { FieldBook } from "../../../types";
+import { apiRequest, getFormData } from "../../constants";
 import {
   FileUpload,
   FormDialog,
   FormFieldChange,
   useFormDialog,
 } from "../Forms";
-import { apiRequest, getFormData } from "../../constants";
 
 const initialValue: FieldBook = {
   author: "",
@@ -87,6 +89,7 @@ export function ModalBookUpload() {
       }
     },
   });
+  // const dialogRef = useRef<HTMLDivElement>(null);
 
   const fieldTouched = useCallback(
     () => formik.touched.books?.at(fieldNum),
@@ -124,6 +127,7 @@ export function ModalBookUpload() {
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
         spacing={1}
+        // ref={dialogRef}
       >
         <FormFieldChange
           values={formik.values.books}
@@ -141,6 +145,7 @@ export function ModalBookUpload() {
         <DialogContentText>
           本本資料({fieldNum + 1} / {formik.values.books.length})：
         </DialogContentText>
+
         <Stack direction="row" display="flex" alignItems="center">
           <IconButton
             onClick={() => setFieldNum(fieldNum - 1)}
@@ -149,6 +154,8 @@ export function ModalBookUpload() {
             <NavigateBefore />
           </IconButton>
 
+          {/* <TransitionGroup>
+            <Slide direction="left" unmountOnExit container={dialogRef.current}> */}
           <Stack direction="column" flexGrow={1} spacing={2}>
             <TextField
               label="繪師"
@@ -200,6 +207,8 @@ export function ModalBookUpload() {
               required
             />
           </Stack>
+          {/* </Slide>
+          </TransitionGroup> */}
 
           <IconButton
             onClick={() => setFieldNum(fieldNum + 1)}

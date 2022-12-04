@@ -63,7 +63,7 @@ auth.post("/discord", async (req, res) => {
 
 auth.get("/getuser", async (req, res) => {
   const user = await verifyToken(req.headers);
-  if (!user) res.sendStatus(404);
+  if (!user) res.sendStatus(403);
   else {
     res.json(user);
   }

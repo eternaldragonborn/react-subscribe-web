@@ -22,7 +22,7 @@ interface SubscriberPageContextType {
   useSort: Reducer<SortState, SortAction>;
   useSelected: State<string[]>;
   useArtistEdit: State<{
-    type: "edit" | "add" | null;
+    type: "edit" | "add" | "delete" | null;
     artist?: string;
     mark?: string;
   }>;

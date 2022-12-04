@@ -20,6 +20,7 @@ export function ModalEditUrl({ id }: { id: string }) {
       preview: "",
       download: "",
       id: id,
+      mark: "",
     },
     onSubmit: async (values) => {
       const action = "網址" + (url ? "更新" : "建檔");
@@ -49,7 +50,8 @@ export function ModalEditUrl({ id }: { id: string }) {
   const notDirty = useCallback(() => {
     const values = formik.values;
     return (
-      values.preview === url.preview_url && values.download === url.download_url
+      values.preview === url?.preview_url &&
+      values.download === url?.download_url
     );
   }, [url, formik.values]);
 
@@ -89,6 +91,13 @@ export function ModalEditUrl({ id }: { id: string }) {
           ，將繪師名以<Kbd>`</Kbd>包覆可有
           <span className="artist-name">強調效果</span>。
         </DialogContentText>
+
+        <TextField
+          label="備註："
+          name="mark"
+          onChange={formik.handleChange}
+          value={formik.values.mark}
+        />
 
         <TextField
           label="預覽網址："

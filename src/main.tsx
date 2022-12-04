@@ -22,7 +22,6 @@ function Router() {
               <Route path="" element={<Overview />} />
               <Route path="subscriber/:id" element={<SubscriberPage />} />
               <Route path="authenticate" element={<Authenticate />} />
-              {/* TODO: 建議/問題回報 */}
               {/* TODO: no match */}
             </Route>
           </Routes>

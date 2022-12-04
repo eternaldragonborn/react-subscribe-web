@@ -22,6 +22,7 @@ export const verifyToken = async (
       token,
       jwt_secret,
     ) as jwt.JwtPayload;
+    if (!payload.id.match(/^\d*$/)) throw Error("invalid token");
     const user = (await getUser(payload.id)) as GuildMember;
 
     if (user.guild) {

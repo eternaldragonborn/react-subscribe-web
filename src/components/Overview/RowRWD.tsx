@@ -21,7 +21,7 @@ import React, { Dispatch, useContext, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { ArtistData } from "../../../server/constant";
 import { AuthContext } from "../../constants";
-import { CircleCloseIcon, RwdDisplay } from "../Utils";
+import { CircleCloseIcon } from "../Utils";
 
 function UrlContent(
   artist: string,
@@ -115,7 +115,6 @@ export default function Row({
         <TableCell // collapse icon
           align="center"
           padding="checkbox"
-          sx={{ ...RwdDisplay("mobile") }}
         >
           <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
@@ -124,42 +123,10 @@ export default function Row({
 
         <TableCell>{artist.artist}</TableCell>
 
-        <TableCell sx={{ ...RwdDisplay("computer") }}>{artist.mark}</TableCell>
-
-        <TableCell sx={{ ...RwdDisplay("computer") }}>
-          {artist.updateDate}
-        </TableCell>
-
         <TableCell>{artist.status}</TableCell>
-
-        {/* 訂閱者 */}
-        <TableCell sx={{ ...RwdDisplay("computer") }}>
-          {user.status === "manager" ? (
-            <Link
-              to={`/subscribe-sys/subscriber/${artist.id.slice(2, -1)}`}
-              component={RouterLink}
-            >
-              {artist.subscriber}
-            </Link>
-          ) : (
-            artist.subscriber
-          )}
-        </TableCell>
-
-        {UrlContent(artist.artist, url, setModalData).map((cell, n) => {
-          return (
-            <TableCell
-              key={n}
-              sx={{ ...RwdDisplay("computer") }}
-              align="center"
-            >
-              {cell}
-            </TableCell>
-          );
-        })}
       </TableRow>
 
-      <TableRow sx={{ ...RwdDisplay("mobile", "table-row") }}>
+      <TableRow>
         <TableCell sx={{ py: 0 }} colSpan={4}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Stack spacing={0.5} sx={{ m: 1 }} divider={<Divider />}>

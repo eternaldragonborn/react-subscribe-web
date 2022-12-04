@@ -110,6 +110,7 @@ export const FormDialog = ({
         transitionDuration={dialogProps.transitionDuration ?? 350}
         TransitionComponent={dialogProps.TransitionComponent ?? Grow}
         disableEscapeKeyDown={isSubmitting}
+        TransitionProps={{ unmountOnExit: true }}
       >
         {title && (
           <DialogTitle>

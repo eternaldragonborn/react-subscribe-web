@@ -22,10 +22,8 @@ export default function Authenticate() {
   const [status, setStatus] = useState("loading");
   const [clock, setClock] = useState(5);
 
-  // http://localhost:3000/authenticate?code=test
   useEffect(() => {
     if (!code) setStatus("failed");
-    else if (code === "test") setTimeout(() => setStatus("success"), 3000);
     else
       axios
         .post("/api/auth/discord", { code: code })

@@ -1,5 +1,6 @@
 import { DriveFolderUploadRounded, Help } from "@mui/icons-material";
 import {
+  Autocomplete,
   Button,
   Checkbox,
   FormControl,
@@ -34,19 +35,25 @@ const StatusValues: { [status: string]: number } = {
   noupdate: 2,
   unsubscribe: 3,
   delete: -1,
+  changeSubscriber: -2,
 };
 
-const validSchema = yup.object().shape({
+const validSchema = yup.object({
   artist: yup.array().of(yup.string()).min(1, "至少需選擇一繪師"),
   status: yup
     .string()
     .required("請選擇更新狀態")
     .oneOf(Object.keys(StatusValues), "無效的選項"),
+  subscriber: yup.string().when("status", {
+    is: (value: StatusOptions) => value === "changeSubscriber",
+    then: yup.string().required("請選擇訂閱者"),
+  }),
 });
 
 export default function ModalArtistUpdate({ id }: { id: string }) {
   const {
     useSubscribeData: [data, setData],
+    useUser: [user],
   } = useContext(AuthContext);
   const {
     useSort: [sortState],
@@ -57,6 +64,7 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
     initialValues: {
       id,
       artist: [] as string[],
+      subscriber: "",
       status: "" as StatusOptions,
       file_link: "",
       mark: "",
@@ -65,7 +73,12 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
     validate: async (values) => {
       const errors: FormikErrors<typeof values> = {};
 
-      await validateField(validSchema, ["artist", "status"], values, errors);
+      await validateField(
+        validSchema,
+        ["artist", "status", "subscriber"],
+        values,
+        errors,
+      );
       if (formik.errors.attachments)
         errors.attachments = formik.errors.attachments;
 
@@ -75,25 +88,33 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
       const [, setSubmitResult] = useSubmitResult;
       const formData = getFormData(values);
 
-      if (values.status === "delete") formData.delete("attachments");
+      let method: Method = "NOTIFY" as Method;
+      let action = "更新";
+      if (values.status === "delete") {
+        method = "DELETE";
+        action = "刪除資料";
+      } else if (values.status === "changeSubscriber") {
+        method = "MERGE" as Method;
+        action = "變更訂閱者";
+      }
 
       await apiRequest
         .request({
           url: "/artist",
-          method: values.status === "delete" ? "DELETE" : ("NOTIFY" as Method),
+          method,
           data: formData,
         })
         .then((res) => {
           if (res.data) {
-            setSubmitResult({ status: "success", action: "更新" });
+            setSubmitResult({ status: "success", action });
             setData({ ...data, artists: res.data });
-          } else setSubmitResult({ status: "warning", action: "更新" });
+          } else setSubmitResult({ status: "warning", action });
           formik.resetForm();
           setSelected([]);
         })
         .catch((err) => {
           const reason = getRequestError(err);
-          setSubmitResult({ status: "error", action: "更新", reason });
+          setSubmitResult({ status: "error", action, reason });
         });
     },
   });
@@ -163,6 +184,9 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
             <MenuItem value={"noupdate"}>本月無更新</MenuItem>
             <MenuItem value={"unsubscribe"}>取消訂閱</MenuItem>
             <MenuItem value={"delete"}>刪除資料</MenuItem>
+            {user.status === "manager" && (
+              <MenuItem value={"changeSubscriber"}>變更訂閱者</MenuItem>
+            )}
           </Select>
           <FormHelperText error>
             {formik.touched.status && formik.errors.status}
@@ -171,6 +195,37 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
           </FormHelperText>
         </FormControl>
 
+        {formik.values.status === "changeSubscriber" && (
+          <Autocomplete
+            onChange={(_, value) =>
+              formik.setFieldValue("subscriber", value?.id ?? "")
+            }
+            options={Object.entries(data.subscribers).map(([id, data]) => ({
+              id,
+              name: data.name,
+            }))}
+            getOptionLabel={(option) => option.name ?? ""}
+            renderOption={(props, option) => (
+              <li {...props} value={option.id}>
+                {option.name}
+              </li>
+            )}
+            renderInput={(param) => (
+              <TextField
+                label="新訂閱者"
+                name="subscriber"
+                {...param}
+                required
+                error={Boolean(formik.errors.subscriber)}
+                helperText={formik.errors.subscriber}
+              />
+            )}
+            getOptionDisabled={(option) => option.id === formik.values.id}
+            autoComplete
+            clearOnEscape
+          />
+        )}
+
         <TextField
           label="備註"
           name="mark"
@@ -178,20 +233,22 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
           onChange={formik.handleChange}
         />
 
-        <TextField // file link
-          label={
-            <Typography align="center">
-              {"檔案連結"}
-              <Tooltip title="檔案的直接下載連結，若有多個檔案可輸入多行">
-                <Help fontSize="inherit" color="primary" />
-              </Tooltip>
-            </Typography>
-          }
-          multiline
-          name="file_link"
-          value={formik.values.file_link}
-          onChange={formik.handleChange}
-        />
+        {formik.values.status === "update" && (
+          <TextField // file link
+            label={
+              <Typography align="center">
+                {"檔案連結"}
+                <Tooltip title="檔案的直接下載連結，若有多個檔案可輸入多行">
+                  <Help fontSize="inherit" color="primary" />
+                </Tooltip>
+              </Typography>
+            }
+            multiline
+            name="file_link"
+            value={formik.values.file_link}
+            onChange={formik.handleChange}
+          />
+        )}
 
         <FileUpload
           label="附件(可多選，總大小限制5MB內)"
@@ -206,6 +263,11 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
               formik.setFieldError("attachments", error),
             [],
           )}
+          disabled={
+            !(["update", "noupdate"] as StatusOptions[]).includes(
+              formik.values.status,
+            )
+          }
           error={Boolean(formik.errors.attachments)}
           helperText={formik.errors.attachments as string}
         />

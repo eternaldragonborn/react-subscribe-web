@@ -1,6 +1,7 @@
-import { Stack, TextField } from "@mui/material";
+import { Collapse, Stack, TextField } from "@mui/material";
 import { FormikErrors, useFormik } from "formik";
 import { useCallback, useContext, useEffect } from "react";
+import { TransitionGroup } from "react-transition-group";
 import * as yup from "yup";
 import { FieldArtist, FormArtist } from "../../../types";
 import {
@@ -24,6 +25,7 @@ const initialValue: FieldArtist = { name: "", mark: "" };
 export default function ModalEditArtist({ id }: { id: string }) {
   const {
     useArtistEdit: [artistData, setArtistData],
+    useSelected: [, setSelected],
   } = useContext(SubscriberPageContext);
   const {
     useSubscribeData: [data, setData],
@@ -60,6 +62,7 @@ export default function ModalEditArtist({ id }: { id: string }) {
               action,
             });
           } else setResult({ status: "warning", action });
+          setSelected([]);
           onClose();
         })
         .catch((err) => {
@@ -135,35 +138,39 @@ export default function ModalEditArtist({ id }: { id: string }) {
         />
       )}
 
-      {formik.values.artists.map((field, n) => {
-        const fieldTouched = formik.touched.artists?.at(n);
-        const fieldErrors = formik.errors.artists?.at(
-          n,
-        ) as FormikErrors<FieldArtist>;
+      <TransitionGroup>
+        {formik.values.artists.map((field, n) => {
+          const fieldTouched = formik.touched.artists?.at(n);
+          const fieldErrors = formik.errors.artists?.at(
+            n,
+          ) as FormikErrors<FieldArtist>;
 
-        return (
-          <Stack direction="row" spacing={0.5} key={n}>
-            <TextField
-              name={`artists.${n}.name`}
-              label="繪師名"
-              required
-              error={fieldTouched?.name && Boolean(fieldErrors?.name)}
-              helperText={fieldTouched?.name && fieldErrors?.name}
-              value={field.name}
-              onChange={formik.handleChange}
-            />
+          return (
+            <Collapse key={n}>
+              <Stack direction="row" spacing={0.5} pb={2}>
+                <TextField
+                  name={`artists.${n}.name`}
+                  label="繪師名"
+                  required
+                  error={fieldTouched?.name && Boolean(fieldErrors?.name)}
+                  helperText={fieldTouched?.name && fieldErrors?.name}
+                  value={field.name}
+                  onChange={formik.handleChange}
+                />
 
-            <TextField
-              name={`artists.${n}.mark`}
-              label="備註"
-              error={Boolean(fieldErrors?.mark)}
-              helperText={fieldErrors?.mark}
-              value={field.mark}
-              onChange={formik.handleChange}
-            />
-          </Stack>
-        );
-      })}
+                <TextField
+                  name={`artists.${n}.mark`}
+                  label="備註"
+                  error={Boolean(fieldErrors?.mark)}
+                  helperText={fieldErrors?.mark}
+                  value={field.mark}
+                  onChange={formik.handleChange}
+                />
+              </Stack>
+            </Collapse>
+          );
+        })}
+      </TransitionGroup>
     </FormDialog>
   );
 }

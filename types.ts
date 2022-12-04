@@ -7,12 +7,17 @@ export enum UpdateStatus {
   noUpdate,
   unSubscribed,
 }
-export type StatusOptions = "update" | "noupdate" | "unsubscribe" | "delete";
+export type StatusOptions =
+  | "update"
+  | "noupdate"
+  | "unsubscribe"
+  | "delete"
+  | "changeSubscriber";
 export const Status: { [key: string]: UpdateStatus } = {
   update: UpdateStatus.normal,
   noupdate: UpdateStatus.noUpdate,
   unsubscribe: UpdateStatus.unSubscribed,
-  // "delete":
+  changeSubscriber: UpdateStatus.newSubscribe,
 };
 
 //#region form format
@@ -33,6 +38,7 @@ export interface FormArtist extends FormData {
 export interface FormUpdate extends FormData {
   id: string;
   artist: string[];
+  subscriber?: string;
   status: StatusOptions;
   file_link?: string;
   mark?: string;
@@ -64,5 +70,6 @@ export interface FormSubscriber extends FormData {
   id: string;
   preview?: string;
   download: string;
+  mark?: string;
 }
 //#endregion

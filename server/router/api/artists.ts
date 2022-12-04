@@ -1,19 +1,8 @@
-import {
-  ColorResolvable,
-  EmbedFieldData,
-  MessageAttachment,
-  WebhookMessageOptions,
-} from "discord.js";
+import { inlineCode } from "@discordjs/builders";
+import { ColorResolvable, EmbedFieldData } from "discord.js";
 import { Router } from "express";
-import multer from "multer";
-import {
-  FormArtist,
-  FormUpdate,
-  FormUploadPackage,
-  Status,
-  UpdateStatus,
-} from "../../../types";
-import { getTime, webhooks } from "../../constant";
+import { FormArtist, FormUpdate, Status, UpdateStatus } from "../../../types";
+import { getTime, upload, webhooks } from "../../constant";
 import { Artist, postgreDataSource, Subscriber } from "../../entity";
 import {
   createEmbed,
@@ -22,6 +11,7 @@ import {
   sendWebhook,
   setPayload,
   verifyForm,
+  verifyIsmanager,
 } from "../../modules";
 
 const artists = Router();
@@ -65,8 +55,12 @@ artists
 
     // notification
     const embed = await createEmbed("繪師新增", "GREEN", form.id);
-    form.artists.forEach((artist) => {
-      embed.addField("繪師", `\`${artist.name}\``, Boolean(artist.mark));
+    form.artists.forEach((artist, n) => {
+      embed.addField(
+        `繪師${n + 1}`,
+        inlineCode(artist.name),
+        Boolean(artist.mark),
+      );
       if (artist.mark) embed.addField("備註", artist.mark, true);
     });
 
@@ -101,83 +95,122 @@ artists
   })
 
   // update artist
-  .notify(
-    verifyForm,
-    multer().array("attachments[]"),
-    async (req, res, next) => {
-      const form: FormUpdate = req.body;
-      const manager = postgreDataSource.manager;
-      let status = Status[form.status];
+  .notify(upload.array("attachments[]"), verifyForm, async (req, res, next) => {
+    const form: FormUpdate = req.body;
+    const manager = postgreDataSource.manager;
+    let status = Status[form.status];
 
-      try {
-        await manager
-          .createQueryBuilder()
-          .update(Artist)
-          .where("artist IN (:...artistNames)", { artistNames: form.artist })
-          .set({
-            lastUpdateTime: getTime().toJSDate(),
-            status: status,
-          })
-          .execute();
-        next();
-      } catch (err: any) {
-        logger.error("繪師更新時發生錯誤\n" + err);
-        res.status(405).send("資料庫發生錯誤。");
-        return;
+    try {
+      await manager
+        .createQueryBuilder()
+        .update(Artist)
+        .where("artist IN (:...artistNames)", { artistNames: form.artist })
+        .set({
+          lastUpdateTime: getTime().toJSDate(),
+          status: status,
+        })
+        .execute();
+      next();
+    } catch (err: any) {
+      logger.error("繪師更新時發生錯誤\n" + err);
+      res.status(405).send("資料庫發生錯誤。");
+      return;
+    }
+
+    // notification
+    try {
+      //#region embed
+      const fields: EmbedFieldData[] = [
+        {
+          name: "繪師",
+          value: form.artist.map((d) => inlineCode(d)).join("\n"),
+          inline: Boolean(form.mark),
+        },
+      ];
+      if (form.mark)
+        fields.push({ name: "備註", value: form.mark, inline: true });
+      if (form.file_link)
+        fields.push({ name: "檔案連結", value: form.file_link });
+
+      let title: string, color: ColorResolvable;
+      switch (status) {
+        case UpdateStatus.normal:
+          const subscriber = await manager.findOneOrFail(Subscriber, {
+            select: { preview: true, download: true },
+            where: { id: form.id },
+          });
+          if (subscriber.preview)
+            fields.push({ name: "預覽", value: subscriber.preview });
+          fields.push({ name: "下載", value: subscriber.download });
+          title = "繪師更新";
+          color = "BLUE";
+          break;
+        case UpdateStatus.noUpdate:
+          title = "繪師停更";
+          color = "DARK_GREY";
+          break;
+        case UpdateStatus.unSubscribed:
+          title = "繪師取消訂閱";
+          color = "DARK_RED";
+          break;
       }
+      const embed = await createEmbed(title!, color!, form.id);
+      embed.addFields(fields);
+      //#endregion
+      const payload = setPayload(embed, req.files);
+      //#endregion
 
-      // notification
-      try {
-        //#region embed
-        const fields: EmbedFieldData[] = [
-          {
-            name: "繪師",
-            value: form.artist.map((d) => `\`${d}\``).join("\n"),
-            inline: Boolean(form.mark),
-          },
-        ];
-        if (form.mark)
-          fields.push({ name: "備註", value: form.mark, inline: true });
-        if (form.file_link)
-          fields.push({ name: "檔案連結", value: form.file_link });
+      await sendWebhook(webhooks.subscribe, "更新通知", payload, form.id);
+    } catch (err) {
+      logger.error("進行更新通知時發生錯誤\n" + err);
+    }
+  })
 
-        let title: string, color: ColorResolvable;
-        switch (status) {
-          case UpdateStatus.normal:
-            const subscriber = await manager.findOneOrFail(Subscriber, {
-              select: { preview: true, download: true },
-              where: { id: form.id },
-            });
-            if (subscriber.preview)
-              fields.push({ name: "預覽", value: subscriber.preview });
-            fields.push({ name: "下載", value: subscriber.download });
-            title = "繪師更新";
-            color = "BLUE";
-            break;
-          case UpdateStatus.noUpdate:
-            title = "繪師停更";
-            color = "DARK_GREY";
-            break;
-          case UpdateStatus.unSubscribed:
-            title = "繪師取消訂閱";
-            color = "DARK_RED";
-            break;
-        }
-        const embed = await createEmbed(title!, color!, form.id);
-        embed.addFields(fields);
-        //#endregion
-        const payload = setPayload(embed, req.files);
-        //#endregion
+  // change subscriber
+  .merge(upload.none(), verifyIsmanager, async (req, res, next) => {
+    const form: FormUpdate = req.body;
+    const manager = postgreDataSource.manager;
+    logger.debug(JSON.stringify(form, null, 2));
 
-        await sendWebhook(webhooks.subscribe, "更新通知", payload, form.id);
-      } catch (err) {
-        logger.error("進行更新通知時發生錯誤\n" + err);
-      }
-    },
-  )
+    try {
+      const oldSubscriber = await manager
+        .findOneByOrFail(Subscriber, {
+          id: form.subscriber,
+        })
+        .catch((err) => {
+          throw Error("取得目標訂閱者失敗\n" + err);
+        });
+
+      await manager
+        .createQueryBuilder()
+        .update(Artist)
+        .where("artist IN (:...artistNames)", { artistNames: form.artist })
+        .set({
+          subscriber: oldSubscriber,
+          lastUpdateTime: getTime().toJSDate(),
+          status: UpdateStatus.newSubscribe,
+        })
+        .execute()
+        .catch((err) => {
+          throw Error("update時發生錯誤\n" + err);
+        });
+      next();
+    } catch (err: any) {
+      logger.error("繪師更新時發生錯誤\n" + err);
+      res.status(405).send("資料庫發生錯誤。");
+      return;
+    }
+
+    // notification
+    const embed = await createEmbed("繪師訂閱者變更", "YELLOW");
+    embed.addField("繪師", `\`${form.artist}\``);
+    embed.addField("原訂閱者", form.id);
+    embed.addField("新訂閱者", form.subscriber!);
+    await sendWebhook(webhooks.subscribe, "訂閱通知", { embeds: [embed] });
+  })
 
   // delete artist
-  .delete(verifyForm, async (req, res, next) => {
+  .delete(upload.none(), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
     const manager = postgreDataSource.manager;
 
@@ -197,7 +230,7 @@ artists
 
     try {
       const embed = await createEmbed("繪師資料刪除", "RED", form.id);
-      embed.addField("繪師", form.artist.map((d) => `\`${d}\``).join("\n"));
+      embed.addField("繪師", form.artist.map((d) => inlineCode(d)).join("\n"));
       await sendWebhook(webhooks.subscribe, "資料刪除", { embeds: [embed] });
     } catch (err) {
       logger.error("進行刪除通知時發生錯誤\n" + err);

@@ -19,7 +19,7 @@ interface UrlData {
 }
 
 type Props = {
-  useModalData: State<UrlData>;
+  useModalData: State<any>;
 };
 
 export default function UrlModal(props: Props) {

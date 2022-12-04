@@ -18,7 +18,7 @@ app.use(parser.json()); // enable urlencoding
 app.use(parser.urlencoded({ extended: false }));
 app.use(Express.static("./build"));
 
-const port = process.env.PORT ?? 80;
+const port = process.env.PORT || 8080;
 app.listen(port, async () => {
   await redis.connect();
   await bot.login(process.env.DISCORD_TOKEN);

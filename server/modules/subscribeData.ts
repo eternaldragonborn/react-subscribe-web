@@ -1,3 +1,4 @@
+import { blockQuote, inlineCode } from "@discordjs/builders";
 import {
   MessageActionRow,
   MessageButton,
@@ -96,7 +97,7 @@ export async function loaddata() {
 export async function checkUpdate() {
   const limitDate = getTime().minus({ days: 30 }).toJSDate();
   const contents: string[] = [];
-  let content = "30天未更新：\n>>> ";
+  let content = "";
 
   try {
     // get data
@@ -123,20 +124,23 @@ export async function checkUpdate() {
       const lastUpdate =
         (artist.status === UpdateStatus.newSubscribe ? "新增後未更新，" : "") +
         DateTime.fromJSDate(artist.lastUpdateTime!).toFormat("MM/dd");
-      filteredData[subscriberId].push(`\`${artist.artist}\`(${lastUpdate})`);
+      filteredData[subscriberId].push(
+        `${inlineCode(artist.artist)}(${lastUpdate})`,
+      );
     }
 
     // subscriber message format
     for (let data in filteredData) {
       const message = `${data}：${filteredData[data].join("、")}\n`;
       // length check
-      if (content.length + message.length > 2000) {
-        contents.push(content);
-        content = ">>> ";
+      if (content.length + message.length > 1990) {
+        contents.push(blockQuote(content));
+        content = "";
       }
       content += message;
     }
-    contents.push(content);
+    contents.push(blockQuote(content));
+    contents[0] = "30天未更新：\n" + contents[0];
 
     // link button
     const component = new MessageActionRow().addComponents(

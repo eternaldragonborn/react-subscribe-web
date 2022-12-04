@@ -1,10 +1,10 @@
-import { useContext, useState, useEffect } from "react";
-import { AuthContext, discordOauthURL, siteURL } from "../../constants";
-import { Box, Container, Tabs, Tab, Button, Stack } from "@mui/material";
-import { useConfirm } from "material-ui-confirm";
-import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
-import { DiscordIcon, DragonIcon, ErrorBoundary } from "../Utils";
 import { Logout } from "@mui/icons-material";
+import { Box, Button, Container, Stack, Tab, Tabs } from "@mui/material";
+import { useConfirm } from "material-ui-confirm";
+import { useContext, useEffect, useState } from "react";
+import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { AuthContext, discordOauthURL, siteURL } from "../../constants";
+import { DiscordIcon, DragonIcon, ErrorBoundary } from "../Utils";
 
 export function Header() {
   const {

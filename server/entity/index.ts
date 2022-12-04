@@ -8,13 +8,9 @@ import { Artist, Subscriber } from "./postgreSQL";
 const postgreDataSource = new DataSource({
   ...databaseConfig.postgre,
   type: "postgres",
-  ssl: process.env.DEV_MODE
-    ? false
-    : {
-        rejectUnauthorized: false,
-      },
+  ssl: false,
   entities: [Subscriber, Artist],
-  synchronize: process.env.DEV_MODE ? true : false,
+  synchronize: !!process.env.DEV_MODE,
   logging: false,
   cache: true,
 });

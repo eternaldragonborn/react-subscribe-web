@@ -6,6 +6,7 @@
   "license": "MIT",
   "private": "true",
   "dependencies": {
+    "@discordjs/builders": "^0.13.0",
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "discord.js": "^13.6.0",
@@ -40,9 +41,7 @@
     "watch": "yarn concurrently --kill-others \"node ./esbuild.config.js\" \"nodemon ./build/index.js\"",
     "dev": "set \"DEV_MODE=1\" && wait-on tcp:5432 tcp:6379 tcp:27017 && yarn watch",
     "start": "node ./build/index.js",
-    "esbuild": "node ./esbuild.config.js 0"
-  },
-  "engines": {
-    "node": "^16.x"
+    "esbuild": "node ./esbuild.config.js 0",
+    "deploy": "flyctl deploy"
   }
 }

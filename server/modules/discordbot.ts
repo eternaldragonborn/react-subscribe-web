@@ -1,3 +1,4 @@
+import { userMention } from "@discordjs/builders";
 import {
   Client,
   ColorResolvable,
@@ -30,9 +31,15 @@ async function getUser(id: string): Promise<User | GuildMember | undefined> {
 
 export function getUserName(user: User | GuildMember | undefined) {
   if (!user) return "unknown";
-  else if (Reflect.has(user, "displayName"))
-    return (user as GuildMember).displayName;
-  else return (user as User).username ?? "unknown";
+  else if (user instanceof GuildMember) {
+    // else if (Reflect.has(user, "displayName")) {
+    user = user as GuildMember;
+    const nick = user.displayName;
+    const username = user.user.username;
+    return nick === username ? nick : `${nick}(${username})`;
+  } else {
+    return (user as User).username ?? "unknown";
+  }
 }
 
 const ImageURLOption: ImageURLOptions = { dynamic: true, format: "jpeg" };
@@ -100,16 +107,17 @@ export async function createEmbed(
     .setColor(color)
     .setFooter({ text: "點擊標題連結可前往網站" })
     .setTimestamp(getTime().toJSDate());
-
   if (user) {
     const author = await getUser(user);
-    embed.setAuthor({
-      name: getUserName(author),
-      iconURL:
-        author?.displayAvatarURL(ImageURLOption) ??
-        author?.avatarURL(ImageURLOption) ??
-        undefined,
-    });
+    embed
+      .addField("訂閱者", author ? userMention(author.id) : "unknown")
+      .setAuthor({
+        name: getUserName(author),
+        iconURL:
+          author?.displayAvatarURL(ImageURLOption) ??
+          author?.avatarURL(ImageURLOption) ??
+          undefined,
+      });
   }
 
   return embed;

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { logger } from "./logger";
 import { verifyToken } from "./utils";
 
 export const verifyIsUser = async (
@@ -32,7 +33,10 @@ export const verifyForm = async (
     user?.status === "manager"
   )
     next();
-  else res.status(403).send("驗證錯誤，僅限本人或管理員進行該動作。");
+  else {
+    logger.error(`${user?.id} 驗證錯誤(form id: ${id})`);
+    res.status(403).send("驗證錯誤，僅限本人或管理員進行該動作。");
+  }
 };
 
 export const verifyIsmanager = async (

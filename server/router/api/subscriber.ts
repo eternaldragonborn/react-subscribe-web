@@ -1,5 +1,7 @@
+import { inlineCode } from "@discordjs/builders";
 import { Message, MessageAttachment, WebhookMessageOptions } from "discord.js";
 import { Router } from "express";
+
 import { FieldBook, FieldPackage, FormSubscriber } from "../../../types";
 import { defaultAvatar, emojis, upload, webhooks } from "../../constant";
 import { Artist, Book, postgreDataSource, Subscriber } from "../../entity";
@@ -72,13 +74,13 @@ subscriber
     }
 
     try {
-      const user = await getUser(subscriberId);
+      // const user = await getUser(subscriberId);
       const embed = await createEmbed("訂閱者資料刪除", "DARK_RED", author?.id);
-      embed.addField("訂閱者", getUserName(user));
+      embed.addField("訂閱者", subscriberId);
       if (artists.length)
         embed.addField(
           "包含以下繪師",
-          artists.map((artist) => `\`${artist.artist}\``).join("\n"),
+          artists.map((artist) => inlineCode(artist.artist)).join("\n"),
         );
 
       await sendWebhook(webhooks.subscribe, "資料刪除", { embeds: [embed] });
@@ -107,8 +109,12 @@ subscriber.post(
         });
 
       const embed = await createEmbed("圖包上傳", "NAVY", id);
-      form.forEach((data) => {
-        embed.addField("作者", data.author, Boolean(data.mark));
+      form.forEach((data, n) => {
+        embed.addField(
+          `作者${n + 1}`,
+          inlineCode(data.author),
+          Boolean(data.mark),
+        );
         if (data.mark) embed.addField("備註", data.mark, true);
         if (data.file_link) embed.addField("檔案連結", data.file_link);
       });
@@ -148,7 +154,7 @@ subscriber.post(
       const embed = await createEmbed(form.title, "DARK_GREEN", id);
       embed.setURL("");
       embed.setFooter({ text: "" });
-      if (form.author) embed.addField("繪師", form.author);
+      if (form.author) embed.addField("繪師", inlineCode(form.author));
       if (form.mark) embed.addField("備註", form.mark);
 
       const image = new MessageAttachment(files.buffer, files.originalname);
