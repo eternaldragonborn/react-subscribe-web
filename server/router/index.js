@@ -1,5 +1,5 @@
 import path from "path";
-import { api } from "./api";
+import {api} from "./api";
 
 const publicPath = path.resolve(path.resolve("") + "/build");
 
@@ -14,4 +14,4 @@ const mountRouter = async (app) => {
     });
 };
 
-export { mountRouter };
+export {mountRouter};

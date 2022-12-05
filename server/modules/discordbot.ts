@@ -1,4 +1,4 @@
-import { userMention } from "@discordjs/builders";
+import {userMention} from "@discordjs/builders";
 import {
   Client,
   ColorResolvable,
@@ -9,10 +9,10 @@ import {
   WebhookMessageOptions,
 } from "discord.js";
 import _ from "lodash";
-import { defaultAvatar, getTime, guilds, siteURL } from "../constant";
-import { logger } from "./logger";
+import {defaultAvatar, getTime, guilds, siteURL} from "../constant";
+import {logger} from "./logger";
 
-const bot = new Client({ intents: [32767] });
+const bot = new Client({intents: [32767]});
 
 bot.on("ready", () => logger.info("Discord bot online."));
 
@@ -42,7 +42,8 @@ export function getUserName(user: User | GuildMember | undefined) {
   }
 }
 
-const ImageURLOption: ImageURLOptions = { dynamic: true, format: "jpeg" };
+const ImageURLOption: ImageURLOptions = {dynamic: true, format: "jpeg"};
+
 function hookOption(name: string, user?: User | GuildMember | undefined) {
   const webhookOptions: WebhookMessageOptions = {
     // default setting
@@ -60,6 +61,7 @@ function hookOption(name: string, user?: User | GuildMember | undefined) {
 
   return webhookOptions;
 }
+
 //#region overload declare
 async function sendWebhook(
   webhook: string | string[],
@@ -105,7 +107,7 @@ export async function createEmbed(
     .setTitle(title)
     .setURL(siteURL) // pending
     .setColor(color)
-    .setFooter({ text: "點擊標題連結可前往網站" })
+    .setFooter({text: "點擊標題連結可前往網站"})
     .setTimestamp(getTime().toJSDate());
   if (user) {
     const author = await getUser(user);
@@ -123,4 +125,4 @@ export async function createEmbed(
   return embed;
 }
 
-export { bot, getUser, sendWebhook };
+export {bot, getUser, sendWebhook};

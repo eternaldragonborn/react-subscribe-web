@@ -1,9 +1,9 @@
-import { inlineCode } from "@discordjs/builders";
-import { ColorResolvable, EmbedFieldData } from "discord.js";
-import { Router } from "express";
-import { FormArtist, FormUpdate, Status, UpdateStatus } from "../../../types";
-import { getTime, upload, webhooks } from "../../constant";
-import { Artist, postgreDataSource, Subscriber } from "../../entity";
+import {inlineCode} from "@discordjs/builders";
+import {ColorResolvable, EmbedFieldData} from "discord.js";
+import {Router} from "express";
+import {FormArtist, FormUpdate, Status, UpdateStatus} from "../../../types";
+import {getTime, upload, webhooks} from "../../constant";
+import {Artist, postgreDataSource, Subscriber} from "../../entity";
 import {
   createEmbed,
   getdata,
@@ -67,7 +67,7 @@ artists
     sendWebhook(
       webhooks.subscribe,
       "訂閱通知",
-      { embeds: [embed] },
+      {embeds: [embed]},
       form.id, //
     ).catch((err) => logger.error("發送新增繪師通知時發生錯誤\n" + err));
 
@@ -82,8 +82,8 @@ artists
     try {
       await manager.update(
         Artist,
-        { artist: form.artists[0].artist },
-        { artist: form.artists[0].name, mark: form.artists[0].mark },
+        {artist: form.artists[0].artist},
+        {artist: form.artists[0].name, mark: form.artists[0].mark},
       );
       next();
     } catch (err: any) {
@@ -104,7 +104,7 @@ artists
       await manager
         .createQueryBuilder()
         .update(Artist)
-        .where("artist IN (:...artistNames)", { artistNames: form.artist })
+        .where("artist IN (:...artistNames)", {artistNames: form.artist})
         .set({
           lastUpdateTime: getTime().toJSDate(),
           status: status,
@@ -128,20 +128,20 @@ artists
         },
       ];
       if (form.mark)
-        fields.push({ name: "備註", value: form.mark, inline: true });
+        fields.push({name: "備註", value: form.mark, inline: true});
       if (form.file_link)
-        fields.push({ name: "檔案連結", value: form.file_link });
+        fields.push({name: "檔案連結", value: form.file_link});
 
       let title: string, color: ColorResolvable;
       switch (status) {
         case UpdateStatus.normal:
           const subscriber = await manager.findOneOrFail(Subscriber, {
-            select: { preview: true, download: true },
-            where: { id: form.id },
+            select: {preview: true, download: true},
+            where: {id: form.id},
           });
           if (subscriber.preview)
-            fields.push({ name: "預覽", value: subscriber.preview });
-          fields.push({ name: "下載", value: subscriber.download });
+            fields.push({name: "預覽", value: subscriber.preview});
+          fields.push({name: "下載", value: subscriber.download});
           title = "繪師更新";
           color = "BLUE";
           break;
@@ -184,7 +184,7 @@ artists
       await manager
         .createQueryBuilder()
         .update(Artist)
-        .where("artist IN (:...artistNames)", { artistNames: form.artist })
+        .where("artist IN (:...artistNames)", {artistNames: form.artist})
         .set({
           subscriber: oldSubscriber,
           lastUpdateTime: getTime().toJSDate(),
@@ -206,7 +206,7 @@ artists
     embed.addField("繪師", `\`${form.artist}\``);
     embed.addField("原訂閱者", form.id);
     embed.addField("新訂閱者", form.subscriber!);
-    await sendWebhook(webhooks.subscribe, "訂閱通知", { embeds: [embed] });
+    await sendWebhook(webhooks.subscribe, "訂閱通知", {embeds: [embed]});
   })
 
   // delete artist
@@ -219,7 +219,7 @@ artists
         .createQueryBuilder()
         .delete()
         .from(Artist)
-        .where("artist IN (:...artistNames)", { artistNames: form.artist })
+        .where("artist IN (:...artistNames)", {artistNames: form.artist})
         .execute();
       next();
     } catch (err: any) {
@@ -231,7 +231,7 @@ artists
     try {
       const embed = await createEmbed("繪師資料刪除", "RED", form.id);
       embed.addField("繪師", form.artist.map((d) => inlineCode(d)).join("\n"));
-      await sendWebhook(webhooks.subscribe, "資料刪除", { embeds: [embed] });
+      await sendWebhook(webhooks.subscribe, "資料刪除", {embeds: [embed]});
     } catch (err) {
       logger.error("進行刪除通知時發生錯誤\n" + err);
     }
@@ -246,4 +246,4 @@ artists.use(async (req, res) => {
     });
 });
 
-export { artists };
+export {artists};

@@ -1,11 +1,11 @@
-import { CloudDownload, Lock, Search } from "@mui/icons-material";
-import { IconButton, Link, TableCell, TableRow, Tooltip } from "@mui/material";
+import {CloudDownload, Lock, Search} from "@mui/icons-material";
+import {IconButton, Link, TableCell, TableRow, Tooltip} from "@mui/material";
 import _ from "lodash";
-import React, { Dispatch, useContext, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { ArtistData } from "../../../server/constant";
-import { AuthContext } from "../../constants";
-import { CircleCloseIcon } from "../Utils";
+import React, {Dispatch, useContext, useState} from "react";
+import {Link as RouterLink} from "react-router-dom";
+import {ArtistData} from "../../../server/constant";
+import {AuthContext} from "../../constants";
+import {CircleCloseIcon} from "../Utils";
 
 function UrlContent(
   artist: string,
@@ -21,7 +21,7 @@ function UrlContent(
         <Tooltip title="非訂閱者無法查看">
           <span>
             <IconButton size="small" disabled>
-              <Lock sx={{ color: "black" }} />
+              <Lock sx={{color: "black"}}/>
             </IconButton>
           </span>
         </Tooltip>
@@ -36,7 +36,7 @@ function UrlContent(
         <Tooltip title="該訂閱者無設定預覽網址" arrow>
           <span>
             <IconButton size="small" disabled>
-              <CircleCloseIcon sx={{ color: "gray" }} />
+              <CircleCloseIcon sx={{color: "gray"}}/>
             </IconButton>
           </span>
         </Tooltip>
@@ -54,7 +54,7 @@ function UrlContent(
             });
           }}
         >
-          <Search sx={{ color: "black" }} />
+          <Search sx={{color: "black"}}/>
         </IconButton>
       );
     }
@@ -71,7 +71,7 @@ function UrlContent(
           })
         }
       >
-        <CloudDownload sx={{ color: "black" }} />
+        <CloudDownload sx={{color: "black"}}/>
       </IconButton>
     );
 
@@ -80,10 +80,10 @@ function UrlContent(
 }
 
 export default function Row({
-  artist,
-  url,
-  setModalData,
-}: {
+                              artist,
+                              url,
+                              setModalData,
+                            }: {
   artist: ArtistData;
   url: { preview_url: string; download_url: string } | null;
   setModalData: Dispatch<any>;

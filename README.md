@@ -16,7 +16,7 @@
 
 - [ ] 搜尋框輸入第一個字後會卡住一小段時間
 - [ ] 效能較差裝置優化
-  - [x] RWD 總覽 table(以`screen.width`決定渲染哪一種)
-  - [ ] 關閉動畫
-    - https://mui.com/material-ui/customization/transitions/
-    - https://mui.com/material-ui/getting-started/faq/#how-can-i-disable-the-ripple-effect-globally
+    - [x] RWD 總覽 table(以`screen.width`決定渲染哪一種)
+    - [ ] 關閉動畫
+        - https://mui.com/material-ui/customization/transitions/
+        - https://mui.com/material-ui/getting-started/faq/#how-can-i-disable-the-ripple-effect-globally

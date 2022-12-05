@@ -1,10 +1,10 @@
-import { createTheme, responsiveFontSizes } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import {createTheme, responsiveFontSizes} from "@mui/material";
+import {grey} from "@mui/material/colors";
 
 const defaultTheme = createTheme();
 let theme = createTheme({
   palette: {
-    secondary: { main: grey[600] },
+    secondary: {main: grey[600]},
   },
   components: {
     MuiBackdrop: {
@@ -98,4 +98,4 @@ let theme = createTheme({
   },
 });
 theme = responsiveFontSizes(theme);
-export { theme };
+export {theme};

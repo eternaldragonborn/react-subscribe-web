@@ -1,12 +1,12 @@
-import { blockQuote, inlineCode } from "@discordjs/builders";
+import {blockQuote, inlineCode} from "@discordjs/builders";
 import {
   MessageActionRow,
   MessageButton,
   WebhookMessageOptions,
 } from "discord.js";
-import { DateTime } from "luxon";
-import { LessThanOrEqual, Not } from "typeorm";
-import { UpdateStatus } from "../../types";
+import {DateTime} from "luxon";
+import {LessThanOrEqual, Not} from "typeorm";
+import {UpdateStatus} from "../../types";
 import {
   ArtistData,
   getTime,
@@ -15,10 +15,10 @@ import {
   SubscriberData,
   webhooks,
 } from "../constant";
-import { Artist, postgreDataSource, Subscriber } from "../entity";
-import { redis } from "./db";
-import { getUser, getUserName, sendWebhook } from "./discordbot";
-import { logger } from "./logger";
+import {Artist, postgreDataSource, Subscriber} from "../entity";
+import {redis} from "./db";
+import {getUser, getUserName, sendWebhook} from "./discordbot";
+import {logger} from "./logger";
 
 function convertArtistData(data: Artist): ArtistData {
   const result = {
@@ -57,11 +57,11 @@ async function convertSubscriberData(data: Subscriber) {
   const subscriber = await getUser(data.id);
   const name = getUserName(subscriber);
 
-  return { ...result, name };
+  return {...result, name};
 }
 
 export async function getdata() {
-  const data = { subscribers: {} } as SubscribeData;
+  const data = {subscribers: {}} as SubscribeData;
   const userNames: { [id: string]: string } = {};
   try {
     const subscribers = await postgreDataSource.manager.find(Subscriber);
@@ -72,7 +72,7 @@ export async function getdata() {
     }
 
     const artists = await postgreDataSource.manager.find(Artist, {
-      order: { lastUpdateTime: "DESC" },
+      order: {lastUpdateTime: "DESC"},
     });
     data.artists = artists.map((artist) => {
       return {
@@ -95,7 +95,7 @@ export async function loaddata() {
 }
 
 export async function checkUpdate() {
-  const limitDate = getTime().minus({ days: 30 }).toJSDate();
+  const limitDate = getTime().minus({days: 30}).toJSDate();
   const contents: string[] = [];
   let content = "";
 
@@ -108,11 +108,11 @@ export async function checkUpdate() {
           status: Not(3),
         },
         order: {
-          subscriber: { id: "ASC" },
+          subscriber: {id: "ASC"},
         },
       })
       .catch((error) => {
-        throw { message: "取得未更新列表發生錯誤", error };
+        throw {message: "取得未更新列表發生錯誤", error};
       });
 
     // artist message format
@@ -156,10 +156,10 @@ export async function checkUpdate() {
       "讓我們看看是哪些小王八蛋還沒更新",
       contents.map(
         (content) =>
-          ({ content, components: [component] } as WebhookMessageOptions),
+          ({content, components: [component]} as WebhookMessageOptions),
       ),
     ).catch((error) => {
-      throw { message: "送出未更新通知錯誤", error };
+      throw {message: "送出未更新通知錯誤", error};
     });
   } catch (err: any) {
     logger.error(err.message + "\n" + err.error);

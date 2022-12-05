@@ -1,88 +1,89 @@
 /* Site */
 ::-webkit-selection, ::-moz-selection, ::selection {
-  background-color: #CCE2FF;
-  color: rgba(0, 0, 0, 0.87);
+    background-color: #CCE2FF;
+    color: rgba(0, 0, 0, 0.87);
 }
 
 /* Form */
 textarea ::-webkit-selection, textarea ::-moz-selection, textarea ::selection, input ::-webkit-selection, input ::-moz-selection, input ::selection {
-  background-color: rgba(100, 100, 100, 0.4);
-  color: rgba(0, 0, 0, 0.87);
+    background-color: rgba(100, 100, 100, 0.4);
+    color: rgba(0, 0, 0, 0.87);
 }
 
 /* textarea */
 textarea {
-  margin: 0em;
-  -webkit-appearance: none;
-  tap-highlight-color: rgba(255, 255, 255, 0);
-  padding: 0.78571429em 1em;
-  background: #FFFFFF;
-  border: 1px solid rgba(34, 36, 38, 0.15);
-  outline: none;
-  color: rgba(0, 0, 0, 0.87);
-  border-radius: 0.28571429rem;
-  -webkit-box-shadow: 0em 0em 0em 0em transparent inset;
-  box-shadow: 0em 0em 0em 0em transparent inset;
-  -webkit-transition: color 0.1s ease, border-color 0.1s ease;
-  transition: color 0.1s ease, border-color 0.1s ease;
-  font-size: 1em;
-  line-height: 1.2857;
-  resize: none;
+    margin: 0;
+    -webkit-appearance: none;
+    tap-highlight-color: rgba(255, 255, 255, 0);
+    padding: 0.78571429em 1em;
+    background: #FFFFFF;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+    outline: none;
+    color: rgba(0, 0, 0, 0.87);
+    border-radius: 0.28571429rem;
+    -webkit-box-shadow: 0 0 0 0 transparent inset;
+    box-shadow: 0 0 0 0 transparent inset;
+    -webkit-transition: color 0.1s ease, border-color 0.1s ease;
+    transition: color 0.1s ease, border-color 0.1s ease;
+    font-size: 1em;
+    line-height: 1.2857;
+    resize: none;
 }
 
 /* link */
 a {
-  color: #4183C4;
-  text-decoration: none;
+    color: #4183C4;
+    text-decoration: none;
 }
 
 a :hover {
-  color: #1e64bf;
+    color: #1e64bf;
 }
 
 body {
-  margin: 0;
-  background-image: url("https://i.imgur.com/HJ8TSew.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+    margin: 0;
+    background-image: url("https://i.imgur.com/HJ8TSew.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 body ::-webkit-scrollbar {
-  -webkit-appearance: none;
-  width: 10px;
-  height: 10px;
+    -webkit-appearance: none;
+    width: 10px;
+    height: 10px;
 }
 
 body ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 0px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0;
 }
 
 body ::-webkit-scrollbar-thumb {
-  cursor: pointer;
-  border-radius: 5px;
-  background: rgba(0, 0, 0, 0.25);
-  -webkit-transition: color 0.2s ease;
-  transition: color 0.2s ease;
+    cursor: pointer;
+    border-radius: 5px;
+    background: rgba(0, 0, 0, 0.25);
+    -webkit-transition: color 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 body ::-webkit-scrollbar-thumb :window-inactive {
-  background: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.15);
 }
 
 body ::-webkit-scrollbar-thumb :hover {
-  background: rgba(128, 135, 139, 0.8);
+    background: rgba(128, 135, 139, 0.8);
 }
 
 .artist-name, code {
-  background-color: gainsboro;
+    background-color: gainsboro;
 }
 
 header {
-  background-color: rgba(255, 255, 255, 0.4) !important;
-  -webkit-backdrop-filter: blur(4px) !important;
-          backdrop-filter: blur(4px) !important;
-  margin-bottom: 1rem;
-  top: 0;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+    margin-bottom: 1rem;
+    top: 0;
 }
+
 /*# sourceMappingURL=style.css.map */

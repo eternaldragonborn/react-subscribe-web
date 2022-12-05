@@ -1,11 +1,11 @@
 import parser from "body-parser";
 import Express from "express";
-import { DateTime } from "luxon";
+import {DateTime} from "luxon";
 import morgan from "morgan";
 import "reflect-metadata";
-import { getTime } from "./constant";
-import { bot, checkUpdate, getdata, logger, redis } from "./modules";
-import { mountRouter } from "./router";
+import {getTime} from "./constant";
+import {bot, checkUpdate, getdata, logger, redis} from "./modules";
+import {mountRouter} from "./router";
 
 const app = Express();
 if (process.env["DEV_MODE"]) {
@@ -15,7 +15,7 @@ if (process.env["DEV_MODE"]) {
 
 app.set("trust proxy", 1);
 app.use(parser.json()); // enable urlencoding
-app.use(parser.urlencoded({ extended: false }));
+app.use(parser.urlencoded({extended: false}));
 app.use(Express.static("./build"));
 
 const port = process.env.PORT || 8080;

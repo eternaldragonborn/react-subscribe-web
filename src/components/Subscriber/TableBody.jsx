@@ -1,4 +1,4 @@
-import { Warning } from "@mui/icons-material";
+import {Warning} from "@mui/icons-material";
 import {
   Checkbox,
   Stack,
@@ -8,12 +8,12 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-import { Edit } from "@mui/icons-material";
+import {Edit} from "@mui/icons-material";
 import _ from "lodash";
-import { useContext } from "react";
-import { SubscriberPageContext } from "../../constants";
+import {useContext} from "react";
+import {SubscriberPageContext} from "../../constants";
 
-function Row({ artist }) {
+function Row({artist}) {
   const {
     useSelected: [selected, setSelected],
     useArtistEdit: [, setArtistData],
@@ -51,7 +51,7 @@ function Row({ artist }) {
           }}
         >
           <Tooltip title="繪師資訊修改">
-            <Edit />
+            <Edit/>
           </Tooltip>
         </IconButton>
       </TableCell>
@@ -68,7 +68,7 @@ function Row({ artist }) {
             {artist.status}
           </Typography>
           {artist.status === "未更新" && (
-            <Warning color="warning" fontSize="small" />
+            <Warning color="warning" fontSize="small"/>
           )}
         </Stack>
       </TableCell>
@@ -84,7 +84,7 @@ export default function ArtistsTable() {
   return (
     <>
       {sortState.data.map((artist) => {
-        return <Row key={artist.artist} artist={artist} />;
+        return <Row key={artist.artist} artist={artist}/>;
       })}
     </>
   );

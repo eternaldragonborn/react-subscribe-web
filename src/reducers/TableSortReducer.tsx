@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { SortState, SortAction } from "../constants/types";
+import {SortState, SortAction} from "../constants";
 
 export function tableSortReducer(
   state: SortState,
@@ -41,7 +41,7 @@ export function tableSortReducer(
         data: action.data,
       };
     case "START_SEARCH":
-      return { ...state, searching: true };
+      return {...state, searching: true};
     case "END_SEARCH":
       let filteredData = _.orderBy(
         action.filtered,
@@ -49,9 +49,9 @@ export function tableSortReducer(
         state.direction,
       );
 
-      return { ...state, filteredData, searching: false };
+      return {...state, filteredData, searching: false};
     case "CLEAR_SEARCH":
-      return { ...state, searching: false, filteredData: null };
+      return {...state, searching: false, filteredData: null};
     default:
       throw new Error(`action type not exist`);
   }

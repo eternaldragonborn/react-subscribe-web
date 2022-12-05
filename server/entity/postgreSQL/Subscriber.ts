@@ -5,9 +5,9 @@ import {
   OneToMany,
   PrimaryColumn,
 } from "typeorm";
-import { Artist } from "./Artist";
+import {Artist} from "./Artist";
 
-@Entity({ name: process.env.DEV_MODE ? "subscribers_test" : "subscribers" })
+@Entity({name: process.env.DEV_MODE ? "subscribers_test" : "subscribers"})
 export class Subscriber {
   @PrimaryColumn("varchar", {
     length: 21,
@@ -17,10 +17,10 @@ export class Subscriber {
   })
   id!: string;
 
-  @Column("text", { name: "preview_url" })
+  @Column("text", {name: "preview_url"})
   preview?: string;
 
-  @Column("text", { nullable: false, name: "download_url" })
+  @Column("text", {nullable: false, name: "download_url"})
   download!: string;
 
   @CreateDateColumn()

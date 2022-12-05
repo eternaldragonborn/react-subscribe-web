@@ -1,4 +1,4 @@
-import { Info } from "@mui/icons-material";
+import {Info} from "@mui/icons-material";
 import {
   TableCell,
   TableHead,
@@ -6,9 +6,9 @@ import {
   TableSortLabel,
   Tooltip,
 } from "@mui/material";
-import { useContext } from "react";
-import { AuthContext } from "../../constants";
-import { RwdDisplay } from "../Utils";
+import {useContext} from "react";
+import {AuthContext} from "../../constants";
+import {RwdDisplay} from "../Utils";
 
 export function TableHeader(props) {
   const {
@@ -17,12 +17,12 @@ export function TableHeader(props) {
   const {
     useSortState: [sortState, sortStateDispatch],
   } = props;
-  const { column, direction } = sortState;
+  const {column, direction} = sortState;
 
   return (
     <TableHead /* sx={{ bgColor: "white" }} */>
       <TableRow>
-        <TableCell sx={{ ...RwdDisplay("mobile") }} />
+        <TableCell sx={{...RwdDisplay("mobile")}}/>
 
         <TableCell>
           <TableSortLabel
@@ -39,9 +39,9 @@ export function TableHeader(props) {
           </TableSortLabel>
         </TableCell>
 
-        <TableCell sx={{ ...RwdDisplay("computer") }}>備註</TableCell>
+        <TableCell sx={{...RwdDisplay("computer")}}>備註</TableCell>
 
-        <TableCell sx={{ ...RwdDisplay("computer") }}>
+        <TableCell sx={{...RwdDisplay("computer")}}>
           <TableSortLabel
             active={column === "updateDate"}
             direction={column === "updateDate" ? direction : "desc"}
@@ -71,7 +71,7 @@ export function TableHeader(props) {
           </TableSortLabel>
         </TableCell>
 
-        <TableCell sx={{ ...RwdDisplay("computer") }}>
+        <TableCell sx={{...RwdDisplay("computer")}}>
           <TableSortLabel
             active={column === "subscriber"}
             direction={column === "subscriber" ? direction : "desc"}
@@ -86,17 +86,17 @@ export function TableHeader(props) {
             訂閱者
             {user?.status === "manager" && (
               <Tooltip title="點擊訂閱者可對其資料進行管理">
-                <Info fontSize="small" color="info" sx={{ pl: "0.2rem" }} />
+                <Info fontSize="small" color="info" sx={{pl: "0.2rem"}}/>
               </Tooltip>
             )}
           </TableSortLabel>
         </TableCell>
 
-        <TableCell align="center" sx={{ ...RwdDisplay("computer") }}>
+        <TableCell align="center" sx={{...RwdDisplay("computer")}}>
           預覽
         </TableCell>
 
-        <TableCell align="center" sx={{ ...RwdDisplay("computer") }}>
+        <TableCell align="center" sx={{...RwdDisplay("computer")}}>
           下載
         </TableCell>
       </TableRow>

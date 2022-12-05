@@ -7,6 +7,7 @@ export enum UpdateStatus {
   noUpdate,
   unSubscribed,
 }
+
 export type StatusOptions =
   | "update"
   | "noupdate"
@@ -30,6 +31,7 @@ export interface FieldArtist {
   name: string;
   mark: string;
 }
+
 export interface FormArtist extends FormData {
   id: string;
   artists: FieldArtist[];
@@ -50,6 +52,7 @@ export interface FieldPackage {
   mark: string;
   file_link: string;
 }
+
 export interface FormUploadPackage extends FormData {
   packages: FieldPackage[];
   files: File[];
@@ -62,6 +65,7 @@ export interface FieldBook {
   mark: string;
   files: File[];
 }
+
 export interface FormBook {
   books: FieldBook[];
 }
@@ -72,4 +76,5 @@ export interface FormSubscriber extends FormData {
   download: string;
   mark?: string;
 }
+
 //#endregion

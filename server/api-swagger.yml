@@ -35,10 +35,10 @@ paths:
   /data/overview:
     get:
       description: '取得所有訂閱資料'
-      parameters: []
+      parameters: [ ]
       responses:
         '200':
           description: OK
 
 security:
-  - bearer: []
+  - bearer: [ ]

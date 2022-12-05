@@ -10,9 +10,13 @@
     "experimentalDecorators": true,
     "allowJs": true,
     // "checkJs": true,
-    "lib": ["ES6"],
+    "lib": [
+      "ES6"
+    ],
     "moduleResolution": "node",
     "outDir": "./build"
   },
-  "exclude": ["*.data.json"]
+  "exclude": [
+    "*.data.json"
+  ]
 }

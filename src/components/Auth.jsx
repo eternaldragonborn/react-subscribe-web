@@ -1,4 +1,4 @@
-import { Cancel, CheckCircle } from "@mui/icons-material";
+import {Cancel, CheckCircle} from "@mui/icons-material";
 import {
   Backdrop,
   CircularProgress,
@@ -8,10 +8,10 @@ import {
   Zoom,
 } from "@mui/material";
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { AuthContext } from "../constants/Contexts";
-import { IconHeader } from "./Utils";
+import {useContext, useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {AuthContext} from "../constants";
+import {IconHeader} from "./Utils";
 
 export default function Authenticate() {
   const [searchParams] = useSearchParams();
@@ -26,13 +26,13 @@ export default function Authenticate() {
     if (!code) setStatus("failed");
     else
       axios
-        .post("/api/auth/discord", { code: code })
+        .post("/api/auth/discord", {code: code})
         .then((res) => {
           const token = res.data;
           setStatus("success");
           axios
             .get("/api/auth/getuser", {
-              headers: { Authorization: `Bearer ${token}` },
+              headers: {Authorization: `Bearer ${token}`},
             })
             .then((res) => {
               setUser(res.data);
@@ -78,7 +78,7 @@ export default function Authenticate() {
           spacing={0}
           direction="column"
         >
-          <CircularProgress size={"5rem"} />
+          <CircularProgress size={"5rem"}/>
           <Typography variant="h3" fontWeight={"bold"} color="white">
             驗證中...
           </Typography>
@@ -93,7 +93,7 @@ export default function Authenticate() {
             header={`驗證${status === "success" ? "成功" : "失敗"}`}
           >
             <Typography variant="h6" color="white" fontWeight="bold">
-              <span style={{ fontSize: "1.5rem" }}>{clock}</span>
+              <span style={{fontSize: "1.5rem"}}>{clock}</span>
               {" 秒後返回總覽，或"}
               <Link href="/subscribe-sys">立刻返回</Link>
             </Typography>

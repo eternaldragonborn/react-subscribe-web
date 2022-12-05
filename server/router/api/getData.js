@@ -1,6 +1,6 @@
-import { Router } from "express";
+import {Router} from "express";
 import _ from "lodash";
-import { loaddata, verifyToken } from "../../modules";
+import {loaddata, verifyToken} from "../../modules";
 
 const data = Router();
 
@@ -24,4 +24,4 @@ data.get("/overview", async (req, res) => {
   }
 });
 
-export { data };
+export {data};

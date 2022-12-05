@@ -1,4 +1,4 @@
-import { UpdateStatus } from "../../types";
+import {UpdateStatus} from "../../types";
 
 export interface SubscriberData {
   name: string;

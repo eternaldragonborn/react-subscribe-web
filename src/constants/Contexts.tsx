@@ -16,6 +16,7 @@ interface AuthContextType {
   useUser: State<UserData>;
   useSubscribeData: State<SubscribeData>;
 }
+
 export const AuthContext = React.createContext<AuthContextType>(undefined!);
 
 interface SubscriberPageContextType {
@@ -28,5 +29,6 @@ interface SubscriberPageContextType {
   }>;
   // id: string;
 }
+
 export const SubscriberPageContext =
   React.createContext<SubscriberPageContextType>(undefined!);

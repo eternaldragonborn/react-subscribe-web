@@ -17,11 +17,11 @@ import {
   Typography,
 } from "@mui/material";
 import _ from "lodash";
-import React, { Dispatch, useContext, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { ArtistData } from "../../../server/constant";
-import { AuthContext } from "../../constants";
-import { CircleCloseIcon } from "../Utils";
+import React, {Dispatch, useContext, useState} from "react";
+import {Link as RouterLink} from "react-router-dom";
+import {ArtistData} from "../../../server/constant";
+import {AuthContext} from "../../constants";
+import {CircleCloseIcon} from "../Utils";
 
 function UrlContent(
   artist: string,
@@ -37,7 +37,7 @@ function UrlContent(
         <Tooltip title="非訂閱者無法查看">
           <span>
             <IconButton size="small" disabled>
-              <Lock sx={{ color: "black" }} />
+              <Lock sx={{color: "black"}}/>
             </IconButton>
           </span>
         </Tooltip>
@@ -52,7 +52,7 @@ function UrlContent(
         <Tooltip title="該訂閱者無設定預覽網址" arrow>
           <span>
             <IconButton size="small" disabled>
-              <CircleCloseIcon sx={{ color: "gray" }} />
+              <CircleCloseIcon sx={{color: "gray"}}/>
             </IconButton>
           </span>
         </Tooltip>
@@ -70,7 +70,7 @@ function UrlContent(
             });
           }}
         >
-          <Search sx={{ color: "black" }} />
+          <Search sx={{color: "black"}}/>
         </IconButton>
       );
     }
@@ -87,7 +87,7 @@ function UrlContent(
           })
         }
       >
-        <CloudDownload sx={{ color: "black" }} />
+        <CloudDownload sx={{color: "black"}}/>
       </IconButton>
     );
 
@@ -96,10 +96,10 @@ function UrlContent(
 }
 
 export default function Row({
-  artist,
-  url,
-  setModalData,
-}: {
+                              artist,
+                              url,
+                              setModalData,
+                            }: {
   artist: ArtistData;
   url: { preview_url: string; download_url: string } | null;
   setModalData: Dispatch<any>;
@@ -117,7 +117,7 @@ export default function Row({
           padding="checkbox"
         >
           <IconButton size="small" onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowDown /> : <KeyboardArrowRight />}
+            {open ? <KeyboardArrowDown/> : <KeyboardArrowRight/>}
           </IconButton>
         </TableCell>
 
@@ -127,9 +127,9 @@ export default function Row({
       </TableRow>
 
       <TableRow>
-        <TableCell sx={{ py: 0 }} colSpan={4}>
+        <TableCell sx={{py: 0}} colSpan={4}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Stack spacing={0.5} sx={{ m: 1 }} divider={<Divider />}>
+            <Stack spacing={0.5} sx={{m: 1}} divider={<Divider/>}>
               <Typography variant="inherit" color="inherit">
                 {"備註：" + artist.mark}
               </Typography>
@@ -157,7 +157,7 @@ export default function Row({
                 alignContent="center"
                 justifyContent="center"
                 spacing={2}
-                divider={<Divider orientation="vertical" flexItem />}
+                divider={<Divider orientation="vertical" flexItem/>}
               >
                 {UrlContent(artist.artist, url, setModalData).map(
                   (content, n) => {

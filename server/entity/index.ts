@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
-import { DataSource } from "typeorm";
-import { databaseConfig } from "../constant";
-import { logger } from "../modules";
-import { Artist, Subscriber } from "./postgreSQL";
+import {DataSource} from "typeorm";
+import {databaseConfig} from "../constant";
+import {logger} from "../modules";
+import {Artist, Subscriber} from "./postgreSQL";
 
+//TODO: 改用mirko-ORM
 //#region postgreSQL
 const postgreDataSource = new DataSource({
   ...databaseConfig.postgre,
@@ -36,4 +37,4 @@ mongoose
 
 export * from "./mongoDB";
 export * from "./postgreSQL";
-export { postgreDataSource };
+export {postgreDataSource};

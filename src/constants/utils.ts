@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ObjectSchema } from "yup";
+import {ObjectSchema} from "yup";
 
 export const urlReplace = (url = "") => {
   url = url.replace(/`([^`]*)`/g, '<span class="artist-name">$1</span>');

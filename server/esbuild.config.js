@@ -17,12 +17,12 @@ esbuild
     platform: "node",
     watch: watch
       ? {
-          onRebuild(error) {
-            error
-              ? console.error("build failed, " + error.message)
-              : console.log("watching...");
-          },
-        }
+        onRebuild(error) {
+          error
+            ? console.error("build failed, " + error.message)
+            : console.log("watching...");
+        },
+      }
       : false,
     bundle: true,
     format: "esm",

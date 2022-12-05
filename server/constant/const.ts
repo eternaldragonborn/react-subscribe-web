@@ -43,25 +43,25 @@ export const manager = [
 const testWebhook = "1049175565061599323";
 export const webhooks = DEV_MODE
   ? {
-      subscribe: testWebhook,
-      updateNotify: testWebhook,
-      book: {
-        subscriber: testWebhook,
-        free: testWebhook,
-      },
-    }
+    subscribe: testWebhook,
+    updateNotify: testWebhook,
+    book: {
+      subscriber: testWebhook,
+      free: testWebhook,
+    },
+  }
   : {
-      // not dev
-      subscribe: [
-        "923607751828062208", // record in test guild
-        "972086281943257088", // notification
-      ],
-      updateNotify: "972086281943257088",
-      book: {
-        subscriber: "972086416513323048",
-        free: "",
-      },
-    };
+    // not dev
+    subscribe: [
+      "923607751828062208", // record in test guild
+      "972086281943257088", // notification
+    ],
+    updateNotify: "972086281943257088",
+    book: {
+      subscriber: "972086416513323048",
+      free: "",
+    },
+  };
 //#endregion
 
 //#region env

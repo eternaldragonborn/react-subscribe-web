@@ -1,4 +1,4 @@
-import { Upload } from "@mui/icons-material";
+import {Upload} from "@mui/icons-material";
 import {
   Button,
   FormHelperText,
@@ -7,11 +7,11 @@ import {
   Typography,
   alpha,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import {grey} from "@mui/material/colors";
 import _ from "lodash";
-import { useCallback, useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { ErrorBoundary } from "../Utils/ErrorBoundary";
+import {useCallback, useEffect, useState} from "react";
+import {useDropzone} from "react-dropzone";
+import {ErrorBoundary} from "../Utils";
 
 interface FileUploadProps {
   files: File[];
@@ -28,28 +28,29 @@ interface FileUploadProps {
   numLimit?: number;
   onError?: (error: string | undefined) => void;
 }
+
 export function FileUpload({
-  files,
-  onChange,
-  label,
-  multiple = false,
-  disabled = false,
-  accept = ["image/*"],
-  required = false,
-  bgcolor = grey[300],
-  error,
-  helperText,
-  sizeLimit = 5 * 1024, // KB
-  numLimit,
-  onError,
-}: FileUploadProps) {
+                             files,
+                             onChange,
+                             label,
+                             multiple = false,
+                             disabled = false,
+                             accept = ["image/*"],
+                             required = false,
+                             bgcolor = grey[300],
+                             error,
+                             helperText,
+                             sizeLimit = 5 * 1024, // KB
+                             numLimit,
+                             onError,
+                           }: FileUploadProps) {
   const [title, setTitle] = useState("拖放檔案至此或點擊以選取檔案");
   const [limitText, setLimitText] = useState("");
   const [selectedText, setSelectedText] =
     useState("已選擇 0 個檔案，總大小 0 KB");
-  const { isDragActive, isDragReject, getInputProps, getRootProps } =
+  const {isDragActive, isDragReject, getInputProps, getRootProps} =
     useDropzone({
-      accept: { "image/*": [] },
+      accept: {"image/*": []},
       disabled,
       multiple: multiple,
       onDrop: (acceptFiles) => {
@@ -116,8 +117,8 @@ export function FileUpload({
 
   return (
     <ErrorBoundary>
-      <Stack direction="column">
-        <Stack direction="row" display="flex" alignItems="center">
+      <Stack direction="column" display={disabled ? "none" : "flex"}>
+        <Stack direction="row" display="flex" alignItems="center" spacing={0.1}>
           <TextField
             variant="filled"
             aria-readonly
@@ -126,14 +127,14 @@ export function FileUpload({
             label={label}
             value={files.map((file) => file.name).join("\n")}
             error={error}
-            sx={{ flexGrow: 1 }}
+            sx={{flexGrow: 1}}
             unselectable="on"
-            InputProps={{ readOnly: true }}
+            InputProps={{readOnly: true}}
           />
           <Button
             size="small"
             color="secondary"
-            sx={{ width: "fit-content" }}
+            sx={{width: "fit-content"}}
             onClick={(e) => {
               e.preventDefault();
               onFileSelected(null);
@@ -146,14 +147,14 @@ export function FileUpload({
         <Stack
           direction="column"
           bgcolor={bgcolor}
-          sx={{ "&:hover": { bgcolor: alpha(bgcolor, 0.6) } }}
+          sx={{"&:hover": {bgcolor: alpha(bgcolor, 0.6)}}}
           {...getRootProps()}
           border="1px dotted rgba(0, 0, 0, 0.42)"
           borderTop="none"
         >
           <input {...getInputProps()} />
 
-          <FormHelperText sx={{ pl: "0.5rem" }} error={error}>
+          <FormHelperText sx={{pl: "0.5rem"}} error={error}>
             {selectedText}
           </FormHelperText>
 
@@ -163,13 +164,13 @@ export function FileUpload({
             justifyItems="center"
             p="2rem"
           >
-            <Upload fontSize="large" />
+            <Upload fontSize="large"/>
             <Typography variant="inherit" color="inherit">
               {title}
             </Typography>
           </Stack>
 
-          <FormHelperText sx={{ pl: "0.5rem" }} error={error}>
+          <FormHelperText sx={{pl: "0.5rem"}} error={error}>
             {limitText}
           </FormHelperText>
         </Stack>

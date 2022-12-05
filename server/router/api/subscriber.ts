@@ -1,17 +1,15 @@
-import { inlineCode } from "@discordjs/builders";
-import { Message, MessageAttachment, WebhookMessageOptions } from "discord.js";
-import { Router } from "express";
+import {inlineCode} from "@discordjs/builders";
+import {Message, MessageAttachment, WebhookMessageOptions} from "discord.js";
+import {Router} from "express";
 
-import { FieldBook, FieldPackage, FormSubscriber } from "../../../types";
-import { defaultAvatar, emojis, upload, webhooks } from "../../constant";
-import { Artist, Book, postgreDataSource, Subscriber } from "../../entity";
+import {FieldBook, FieldPackage, FormSubscriber} from "../../../types";
+import {defaultAvatar, emojis, upload, webhooks} from "../../constant";
+import {Artist, Book, postgreDataSource, Subscriber} from "../../entity";
 import {
   bot,
   createEmbed,
   getdata,
   getTokenId,
-  getUser,
-  getUserName,
   logger,
   redis,
   sendWebhook,
@@ -33,7 +31,7 @@ subscriber
     try {
       await postgreDataSource.manager.upsert(
         Subscriber,
-        { id: form.id, preview: form.preview, download: form.download },
+        {id: form.id, preview: form.preview, download: form.download},
         ["id"],
       );
       next();
@@ -55,14 +53,14 @@ subscriber
   // delete subscriber
   .delete(verifyIsmanager, async (req, res) => {
     const author = await verifyToken(req.headers);
-    const { subscriber: subscriberId }: { subscriber: string } = req.body;
+    const {subscriber: subscriberId}: { subscriber: string } = req.body;
     let artists: Artist[];
 
     try {
       artists = await postgreDataSource.manager.find(Artist, {
-        where: { subscriber: { id: subscriberId } },
+        where: {subscriber: {id: subscriberId}},
       });
-      await postgreDataSource.manager.delete(Subscriber, { id: subscriberId });
+      await postgreDataSource.manager.delete(Subscriber, {id: subscriberId});
       logger.trace(`訂閱者(${subscriberId})資料刪除`);
 
       const data = await getdata();
@@ -83,7 +81,7 @@ subscriber
           artists.map((artist) => inlineCode(artist.artist)).join("\n"),
         );
 
-      await sendWebhook(webhooks.subscribe, "資料刪除", { embeds: [embed] });
+      await sendWebhook(webhooks.subscribe, "資料刪除", {embeds: [embed]});
     } catch (err) {
       logger.error("資料刪除通知發生錯誤\n" + err);
     }
@@ -101,11 +99,11 @@ subscriber.post(
     try {
       const subscriber = await postgreDataSource.manager
         .findOneOrFail(Subscriber, {
-          where: { id },
-          select: { preview: true, download: true },
+          where: {id},
+          select: {preview: true, download: true},
         })
         .catch((err) => {
-          throw { message: "資料庫錯誤", error: err };
+          throw {message: "資料庫錯誤", error: err};
         });
 
       const embed = await createEmbed("圖包上傳", "NAVY", id);
@@ -126,7 +124,7 @@ subscriber.post(
 
       await sendWebhook(webhooks.subscribe, "圖包上傳", payload).catch(
         (error) => {
-          throw { message: "bot錯誤", error };
+          throw {message: "bot錯誤", error};
         },
       );
 
@@ -148,12 +146,12 @@ subscriber.post(
     const id = getTokenId(req.headers);
 
     try {
-      if (!files) throw { message: "無預覽圖" };
+      if (!files) throw {message: "無預覽圖"};
 
       // set embed
       const embed = await createEmbed(form.title, "DARK_GREEN", id);
       embed.setURL("");
-      embed.setFooter({ text: "" });
+      embed.setFooter({text: ""});
       if (form.author) embed.addField("繪師", inlineCode(form.author));
       if (form.mark) embed.addField("備註", form.mark);
 
@@ -176,14 +174,14 @@ subscriber.post(
         await msg.react(emojis.book);
       } catch (error) {
         if (msg) await msg.delete();
-        throw { message: "發送本本訊息失敗", error };
+        throw {message: "發送本本訊息失敗", error};
       }
 
       // fileing
       await redis.sAdd("msg_ids", msg.id).catch((error) => {
-        throw { message: "資料庫錯誤", error };
+        throw {message: "資料庫錯誤", error};
       });
-      const book = new Book({ _id: msg.id, url: form.url });
+      const book = new Book({_id: msg.id, url: form.url});
       book
         .save()
         .then(() => {
@@ -191,7 +189,7 @@ subscriber.post(
           logger.trace(`本本(${msg!.id})新增成功`);
         })
         .catch((error) => {
-          throw { message: "資料庫錯誤", error };
+          throw {message: "資料庫錯誤", error};
         });
     } catch (err: any) {
       logger.error("本本新增失敗，" + err.message + "\n" + (err.error ?? ""));
@@ -209,4 +207,4 @@ subscriber.use(async (req, res) => {
     });
 });
 
-export { subscriber };
+export {subscriber};

@@ -1,7 +1,7 @@
-import { useContext } from "react";
-import { AuthContext } from "../../constants";
-import { ModalBookUpload } from "./ModalBookUpload";
-import { ModalPackUpload } from "./ModalPackUpload";
+import {useContext} from "react";
+import {AuthContext} from "../../constants";
+import {ModalBookUpload} from "./ModalBookUpload";
+import {ModalPackUpload} from "./ModalPackUpload";
 
 export default function Toolbar() {
   const {
@@ -11,8 +11,8 @@ export default function Toolbar() {
 
   return (
     <>
-      {data.subscribers[`<@${user.id}>`] && <ModalPackUpload />}
-      <ModalBookUpload />
+      {data.subscribers[`<@${user.id}>`] && <ModalPackUpload/>}
+      <ModalBookUpload/>
     </>
   );
 }

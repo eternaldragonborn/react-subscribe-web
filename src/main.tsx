@@ -1,12 +1,12 @@
-import { ThemeProvider } from "@mui/material";
-import { ConfirmProvider } from "material-ui-confirm";
-import { lazy, StrictMode, Suspense, useEffect, useState } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { BackdropLoading, ErrorBoundary, Header } from "./components";
-import { apiRequest, AuthContext, SubscribeData, UserData } from "./constants";
+import {ThemeProvider} from "@mui/material";
+import {ConfirmProvider} from "material-ui-confirm";
+import {lazy, StrictMode, Suspense, useEffect, useState} from "react";
+import {createRoot} from "react-dom/client";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BackdropLoading, ErrorBoundary, Header} from "./components";
+import {apiRequest, AuthContext, SubscribeData, UserData} from "./constants";
 import "./styles/style.css";
-import { theme } from "./styles/theme";
+import {theme} from "./styles/theme";
 
 const Overview = lazy(() => import("./components/OverviewPage"));
 const SubscriberPage = lazy(() => import("./components/SubscriberPage"));
@@ -16,12 +16,12 @@ function Router() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <Suspense fallback={<BackdropLoading />}>
+        <Suspense fallback={<BackdropLoading/>}>
           <Routes>
-            <Route path="/subscribe-sys" element={<Header />}>
-              <Route path="" element={<Overview />} />
-              <Route path="subscriber/:id" element={<SubscriberPage />} />
-              <Route path="authenticate" element={<Authenticate />} />
+            <Route path="/subscribe-sys" element={<Header/>}>
+              <Route path="" element={<Overview/>}/>
+              <Route path="subscriber/:id" element={<SubscriberPage/>}/>
+              <Route path="authenticate" element={<Authenticate/>}/>
               {/* TODO: no match */}
             </Route>
           </Routes>
@@ -60,7 +60,7 @@ function Content() {
       }}
     >
       <ErrorBoundary>
-        <Router />
+        <Router/>
       </ErrorBoundary>
     </AuthContext.Provider>
   );
@@ -71,7 +71,7 @@ createRoot(root).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
       <ConfirmProvider>
-        <Content />
+        <Content/>
       </ConfirmProvider>
     </ThemeProvider>
   </StrictMode>,

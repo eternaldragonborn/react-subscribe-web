@@ -7,9 +7,9 @@ interface IBookRecord {
 }
 
 export const bookSchema = new mongoose.Schema<IBookRecord>({
-  _id: { type: String, required: true },
-  url: { type: String, required: true },
-  users: { type: [String], default: [] },
+  _id: {type: String, required: true},
+  url: {type: String, required: true},
+  users: {type: [String], default: []},
 });
 
 export const Book = mongoose.model<IBookRecord>(

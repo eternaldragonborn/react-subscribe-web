@@ -5,14 +5,15 @@ import {
   WebhookMessageOptions,
 } from "discord.js";
 import jwt from "jsonwebtoken";
-import { jwt_secret, roles, manager } from "../constant";
-import { getUser } from "./discordbot.js";
-import { logger } from "./logger";
+import {jwt_secret, roles, manager} from "../constant";
+import {getUser} from "./discordbot.js";
+import {logger} from "./logger";
 
 interface UserPayload extends jwt.JwtPayload {
   id: string;
   status: "user" | "manager" | "subscriber";
 }
+
 export const verifyToken = async (
   header: import("http").IncomingHttpHeaders,
 ): Promise<UserPayload | undefined> => {
@@ -63,10 +64,10 @@ export const setPayload = (
       (file) => new MessageAttachment(file.buffer, file.originalname),
     );
     embed.setImage(`attachment://${image.name}`);
-    payload.push({ embeds: [embed], files: [image] });
+    payload.push({embeds: [embed], files: [image]});
 
-    if (attachments.length) payload.push({ content: " ", files: attachments });
-  } else payload.push({ embeds: [embed] });
+    if (attachments.length) payload.push({content: " ", files: attachments});
+  } else payload.push({embeds: [embed]});
 
   return payload;
 };

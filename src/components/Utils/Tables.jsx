@@ -1,4 +1,4 @@
-import { Cancel, Lock } from "@mui/icons-material";
+import {Cancel, Lock} from "@mui/icons-material";
 import {
   CircularProgress,
   Stack,
@@ -6,14 +6,14 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { IconHeader } from "./Icons";
+import {IconHeader} from "./Icons";
 
 /*
  * @param {{status: "loading" | "failed" | "forbidden"}} props
  * @returns
  */
 export function TableLoading(props) {
-  const { status } = props;
+  const {status} = props;
 
   return (
     <TableRow>
@@ -21,7 +21,7 @@ export function TableLoading(props) {
         <Stack direction={"column"} alignItems={"center"}>
           {status === "loading" && (
             <>
-              <CircularProgress size={"5rem"} />
+              <CircularProgress size={"5rem"}/>
               <Typography variant="h3" color="initial" fontWeight={"bold"}>
                 取得資料中...
               </Typography>
