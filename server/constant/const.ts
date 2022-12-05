@@ -1,5 +1,5 @@
-import { Secret } from "jsonwebtoken";
-import { DateTime } from "luxon";
+import {Secret} from "jsonwebtoken";
+import {DateTime} from "luxon";
 import multer from "multer";
 
 const DEV_MODE = process.env.DEV_MODE;
@@ -9,8 +9,7 @@ export const upload = multer();
 export const defaultAvatar = "https://i.imgur.com/7nVzfbf.png";
 
 export const getTime = () => {
-  const time = DateTime.now().setZone("Asia/Taipei");
-  return time;
+  return DateTime.now().setZone("Asia/Taipei");
 };
 
 export const siteURL =
@@ -41,7 +40,7 @@ export const manager = [
 ];
 
 // webhook
-const testWebhook = "928905146849689641";
+const testWebhook = "1049175565061599323";
 export const webhooks = DEV_MODE
   ? {
       subscribe: testWebhook,
