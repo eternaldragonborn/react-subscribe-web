@@ -263,11 +263,11 @@ export default function ModalArtistUpdate({ id }: { id: string }) {
               formik.setFieldError("attachments", error),
             [],
           )}
-          disabled={
-            !(["update", "noupdate"] as StatusOptions[]).includes(
-              formik.values.status,
-            )
-          }
+          // disabled={
+          //   !(["update", "noupdate"] as StatusOptions[]).includes(
+          //     formik.values.status,
+          //   )
+          // }
           error={Boolean(formik.errors.attachments)}
           helperText={formik.errors.attachments as string}
         />
