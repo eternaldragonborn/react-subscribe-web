@@ -1,8 +1,10 @@
 import esbuild from "esbuild";
+import { esbuildDecorators } from "@anatine/esbuild-decorators";
 
 const args = process.argv;
 // console.log(args);
 const watch = Number(args[2] ?? 1);
+const test = args[3];
 // export default function build(watch = true) {
 esbuild
   .build({
@@ -15,18 +17,10 @@ esbuild
     },
     outdir: "./build",
     platform: "node",
-    watch: watch
-      ? {
-        onRebuild(error) {
-          error
-            ? console.error("build failed, " + error.message)
-            : console.log("watching...");
-        },
-      }
-      : false,
     bundle: true,
     format: "esm",
-    minify: true,
+    plugins: [esbuildDecorators()],
+    // minify: true,
     external: ["./node_modules/*", "./build/*"],
     tsconfig: "./tsconfig.json",
   })

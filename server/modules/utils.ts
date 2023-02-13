@@ -5,9 +5,9 @@ import {
   WebhookMessageOptions,
 } from "discord.js";
 import jwt from "jsonwebtoken";
-import {jwt_secret, roles, manager} from "../constant";
-import {getUser} from "./discordbot.js";
-import {logger} from "./logger";
+import { jwt_secret, roles, manager } from "../constant";
+import { getUser } from "./discordbot";
+import { logger } from "./logger";
 
 interface UserPayload extends jwt.JwtPayload {
   id: string;
@@ -19,10 +19,7 @@ export const verifyToken = async (
 ): Promise<UserPayload | undefined> => {
   const token = header.authorization?.split(" ")[1] ?? "";
   try {
-    const payload: UserPayload = jwt.verify(
-      token,
-      jwt_secret,
-    ) as jwt.JwtPayload;
+    const payload: UserPayload = jwt.verify(token, jwt_secret) as UserPayload;
     if (!payload.id.match(/^\d*$/)) throw Error("invalid token");
     const user = (await getUser(payload.id)) as GuildMember;
 
@@ -64,10 +61,21 @@ export const setPayload = (
       (file) => new MessageAttachment(file.buffer, file.originalname),
     );
     embed.setImage(`attachment://${image.name}`);
-    payload.push({embeds: [embed], files: [image]});
+    payload.push({ embeds: [embed], files: [image] });
 
-    if (attachments.length) payload.push({content: " ", files: attachments});
-  } else payload.push({embeds: [embed]});
+    if (attachments.length) payload.push({ content: " ", files: attachments });
+  } else payload.push({ embeds: [embed] });
 
   return payload;
 };
+
+export async function asyncExecute<T>(
+  fn: Promise<T>,
+): Promise<[T, null] | [null, Error]> {
+  try {
+    const result = await fn;
+    return [result, null];
+  } catch (e: any) {
+    return [null, e];
+  }
+}

@@ -1,6 +1,6 @@
-import {NextFunction, Request, Response} from "express";
-import {logger} from "./logger";
-import {verifyToken} from "./utils";
+import { NextFunction, Request, Response } from "express";
+import { logger } from "./logger";
+import { verifyToken } from "./utils";
 
 export const verifyIsUser = async (
   req: Request,
@@ -39,7 +39,7 @@ export const verifyForm = async (
   }
 };
 
-export const verifyIsmanager = async (
+export const verifyIsManager = async (
   req: Request,
   res: Response,
   next: NextFunction,

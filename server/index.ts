@@ -1,36 +1,45 @@
+import "reflect-metadata";
 import parser from "body-parser";
 import Express from "express";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import morgan from "morgan";
-import "reflect-metadata";
-import {getTime} from "./constant";
-import {bot, checkUpdate, getdata, logger, redis} from "./modules";
-import {mountRouter} from "./router";
+import { getTime } from "./constant";
+import { bot, checkUpdate, getData, logger, db } from "./modules";
+import { mountRouter } from "./router";
+import { RequestContext } from "@mikro-orm/core";
 
-const app = Express();
+export const app = Express();
+
 if (process.env["DEV_MODE"]) {
   logger.debug("backend running in dev mode");
   app.use(morgan("dev"));
 }
 
-app.set("trust proxy", 1);
-app.use(parser.json()); // enable urlencoding
-app.use(parser.urlencoded({extended: false}));
-app.use(Express.static("./build"));
-
-const port = process.env.PORT || 8080;
-app.listen(port, async () => {
-  await redis.connect();
+(async function init() {
+  await db.init();
   await bot.login(process.env.DISCORD_TOKEN);
-  await getdata();
+  await getData();
 
-  await mountRouter(app);
-  logger.info("back-end listening on " + port);
+  app.set("trust proxy", 1);
+  app.use(parser.json()); // enable urlencoding
+  app.use(parser.urlencoded({ extended: false }));
+  app.use(Express.static("./build"));
+  app.use((_req, _res, next) => {
+    RequestContext.create([db.mongoEm, db.postgreEm], next);
+  });
+  const port = process.env.PORT || 8080;
+
+  // app.use()
+  mountRouter(app);
+
+  app.listen(port, () => {
+    logger.info("back-end listening on " + port);
+  });
 
   //#region update check
   const now = getTime();
   const lastUpdateCheck = DateTime.fromISO(
-    (await redis.get("UpdateCheck")) ?? "",
+    (await db.redis.get("UpdateCheck")) ?? "",
   );
 
   if (
@@ -38,7 +47,7 @@ app.listen(port, async () => {
     now.diff(lastUpdateCheck, "days").days > 5
   ) {
     await checkUpdate();
-    await redis.set("UpdateCheck", now.toISODate());
+    await db.redis.set("UpdateCheck", now.toISODate());
   }
   //#endregion
-});
+})();

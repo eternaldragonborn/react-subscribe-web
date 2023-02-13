@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
-    // "module": "module",
+    "target": "ES2022",
+    "module": "CommonJS",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "declaration": true,
     "allowJs": true,
     // "checkJs": true,
-    "lib": [
-      "ES6"
-    ],
+    "lib": ["ES6", "DOM"],
     "moduleResolution": "node",
     "outDir": "./build"
   },
-  "exclude": [
-    "*.data.json"
-  ]
+  "exclude": ["*.data.json", "test/*"]
 }

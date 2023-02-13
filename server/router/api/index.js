@@ -1,8 +1,8 @@
-import {Router} from "express";
-import {auth} from "./auth.js";
-import {data} from "./getData.js";
-import {artists} from "./artists.js";
-import {subscriber} from "./subscriber.js";
+import { Router } from "express";
+import { auth } from "./auth";
+import { data } from "./getData";
+import { artists } from "./artists";
+import { subscriber } from "./subscriber";
 
 const api = Router();
 
@@ -11,8 +11,8 @@ api.use("/data", data);
 api.use("/artist", artists);
 api.use("/subscriber", subscriber);
 
-api.get("/status", (req, res) => {
+api.get("/status", (_req, res) => {
   res.sendStatus(200);
 });
 
-export {api};
+export { api };

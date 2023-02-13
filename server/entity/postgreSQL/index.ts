@@ -1,2 +1,2 @@
-export * from "./Artist";
-export * from "./Subscriber";
+export * from "./artist.entity";
+export * from "./subscriber.entity";

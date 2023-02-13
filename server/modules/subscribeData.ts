@@ -1,12 +1,11 @@
-import {blockQuote, inlineCode} from "@discordjs/builders";
+import { blockQuote, inlineCode } from "@discordjs/builders";
 import {
   MessageActionRow,
   MessageButton,
   WebhookMessageOptions,
 } from "discord.js";
-import {DateTime} from "luxon";
-import {LessThanOrEqual, Not} from "typeorm";
-import {UpdateStatus} from "../../types";
+import { DateTime } from "luxon";
+import { UpdateStatus } from "../../types";
 import {
   ArtistData,
   getTime,
@@ -15,16 +14,20 @@ import {
   SubscriberData,
   webhooks,
 } from "../constant";
-import {Artist, postgreDataSource, Subscriber} from "../entity";
-import {redis} from "./db";
-import {getUser, getUserName, sendWebhook} from "./discordbot";
-import {logger} from "./logger";
+import { db } from "./databases";
+import { getUser, getUserName, sendWebhook } from "./discordbot";
+import { logger } from "./logger";
+import { Subscriber, Artist } from "../entity/postgreSQL";
+import { result } from "lodash";
+import { wrap } from "@mikro-orm/core";
 
 function convertArtistData(data: Artist): ArtistData {
+  // let subscriber = wrap(data.subscriber).init();
+
   const result = {
     artist: data.artist,
     mark: data.mark,
-    id: data.subscriber.id,
+    // id: data.subscriber.id,
   } as ArtistData;
 
   //#region update status/date
@@ -57,68 +60,81 @@ async function convertSubscriberData(data: Subscriber) {
   const subscriber = await getUser(data.id);
   const name = getUserName(subscriber);
 
-  return {...result, name};
+  return { ...result, name };
 }
 
-export async function getdata() {
-  const data = {subscribers: {}} as SubscribeData;
+//TODO: refactor to mikro-orm
+export async function getData() {
+  const data = { subscribers: {} } as SubscribeData;
   const userNames: { [id: string]: string } = {};
+  const em = db.postgreEm.fork();
   try {
-    const subscribers = await postgreDataSource.manager.find(Subscriber);
+    const subscribers = await em.find(Subscriber, {});
+
     for (let subscriber of subscribers) {
-      const result = await convertSubscriberData(subscriber);
-      userNames[subscriber.id] = result.name;
-      data.subscribers[subscriber.id] = result;
+      let convertedData = await convertSubscriberData(subscriber);
+      userNames[subscriber.id] = convertedData.name;
+      data.subscribers[subscriber.id] = convertedData;
     }
 
-    const artists = await postgreDataSource.manager.find(Artist, {
-      order: {lastUpdateTime: "DESC"},
-    });
-    data.artists = artists.map((artist) => {
-      return {
-        ...convertArtistData(artist),
-        subscriber: userNames[artist.subscriber.id],
-      };
-    });
+    const artists = await em.find(
+      Artist,
+      {},
+      { orderBy: { lastUpdateTime: "DESC" } },
+    );
+    data.artists = [];
+    for (const artist of artists) {
+      let subscriber = await artist.subscriber?.load("id");
 
-    await redis.set("data", JSON.stringify(data));
-    logger.info("subscribe data initialized.");
+      data.artists.push({
+        ...convertArtistData(artist),
+        subscriber: userNames[subscriber ?? ""] ?? "unknown",
+      });
+    }
+
+    await db.redis.set("data", JSON.stringify(data));
+    logger.info("subscriber data (re)loaded");
     return data;
   } catch (err: any) {
     logger.error("Get subscribe data failed, " + err.message);
   }
 }
 
-export async function loaddata() {
-  if (!(await redis.exists("data"))) await getdata();
-  return JSON.parse((await redis.get("data")) ?? "{}") as SubscribeData;
+export async function loadData() {
+  if (!(await db.redis.exists("data"))) await getData();
+  return JSON.parse((await db.redis.get("data")) ?? "{}") as SubscribeData;
 }
 
 export async function checkUpdate() {
-  const limitDate = getTime().minus({days: 30}).toJSDate();
+  const limitDate = getTime().minus({ days: 30 }).toJSDate();
   const contents: string[] = [];
   let content = "";
 
   try {
     // get data
-    const artistList = await postgreDataSource.manager
-      .find(Artist, {
-        where: {
-          lastUpdateTime: LessThanOrEqual(limitDate),
-          status: Not(3),
-        },
-        order: {
-          subscriber: {id: "ASC"},
-        },
-      })
-      .catch((error) => {
-        throw {message: "取得未更新列表發生錯誤", error};
-      });
+    const artistList = await db.createContext(db.postgreEm, async (em) => {
+      return await em
+        .find(
+          Artist,
+          {
+            lastUpdateTime: { $lte: limitDate },
+            status: { $not: 3 },
+          },
+          {
+            orderBy: {
+              subscriber: { id: "ASC" },
+            },
+          },
+        )
+        .catch((error) => {
+          throw { message: "取得未更新列表發生錯誤", error };
+        });
+    });
 
     // artist message format
     const filteredData: { [subscriber: string]: string[] } = {};
     for (let artist of artistList) {
-      const subscriberId = artist.subscriber.id;
+      const subscriberId = await artist.subscriber!.load("id");
       if (!filteredData[subscriberId]) filteredData[subscriberId] = [];
 
       const lastUpdate =
@@ -156,10 +172,10 @@ export async function checkUpdate() {
       "讓我們看看是哪些小王八蛋還沒更新",
       contents.map(
         (content) =>
-          ({content, components: [component]} as WebhookMessageOptions),
+          ({ content, components: [component] } as WebhookMessageOptions),
       ),
     ).catch((error) => {
-      throw {message: "送出未更新通知錯誤", error};
+      throw { message: "送出未更新通知錯誤", error };
     });
   } catch (err: any) {
     logger.error(err.message + "\n" + err.error);

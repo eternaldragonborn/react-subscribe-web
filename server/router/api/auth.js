@@ -1,9 +1,9 @@
 import axios from "axios";
-import {Router} from "express";
+import { Router } from "express";
 import qs from "qs";
 import jwt from "jsonwebtoken";
-import {guilds, jwt_secret, siteURL} from "../../constant";
-import {logger, verifyToken} from "../../modules";
+import { guilds, jwt_secret, siteURL } from "../../constant";
+import { logger, verifyToken } from "../../modules";
 
 const auth = Router();
 auth.get("/test", (req, res) => {
@@ -12,9 +12,9 @@ auth.get("/test", (req, res) => {
 });
 
 auth.post("/discord", async (req, res) => {
-  const {code} = req.body;
+  const { code } = req.body;
   try {
-    const {access_token, refresh_token} = await axios // get access_token
+    const { access_token, refresh_token } = await axios // get access_token
       .post(
         "https://discord.com/api/oauth2/token",
         qs.stringify({
@@ -25,7 +25,7 @@ auth.post("/discord", async (req, res) => {
           redirect_uri: siteURL + "/authenticate",
         }),
         {
-          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
         },
       )
       .then((res) => {
@@ -50,7 +50,7 @@ auth.post("/discord", async (req, res) => {
     ).data;
 
     // set jwt payload
-    const payload = {id: user.user.id};
+    const payload = { id: user.user.id };
 
     const token = jwt.sign(payload, jwt_secret); // set jwt token
 
@@ -69,4 +69,4 @@ auth.get("/getuser", async (req, res) => {
   }
 });
 
-export {auth};
+export { auth };

@@ -1,1 +1,1 @@
-export * from "./book-record";
+export * from "./bookRecord.entity";

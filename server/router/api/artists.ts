@@ -1,18 +1,21 @@
-import {inlineCode} from "@discordjs/builders";
-import {ColorResolvable, EmbedFieldData} from "discord.js";
-import {Router} from "express";
-import {FormArtist, FormUpdate, Status, UpdateStatus} from "../../../types";
-import {getTime, upload, webhooks} from "../../constant";
-import {Artist, postgreDataSource, Subscriber} from "../../entity";
+import { inlineCode } from "@discordjs/builders";
+import { ColorResolvable, EmbedFieldData } from "discord.js";
+import { Router } from "express";
+import { FormArtist, FormUpdate, Status, UpdateStatus } from "../../../types";
+import { getTime, upload, webhooks } from "../../constant";
+import { db } from "../../modules/databases";
 import {
+  asyncExecute,
   createEmbed,
-  getdata,
+  getData,
   logger,
   sendWebhook,
   setPayload,
   verifyForm,
-  verifyIsmanager,
+  verifyIsManager,
 } from "../../modules";
+import { Subscriber, Artist } from "../../entity";
+import { NotFoundError, wrap } from "@mikro-orm/core";
 
 const artists = Router();
 
@@ -21,27 +24,18 @@ artists
   // add artist
   .post(verifyForm, async (req, res, next) => {
     const form: FormArtist = req.body;
-    const manager = postgreDataSource.manager;
 
     try {
-      const subscriber = await manager
-        .findOneByOrFail(Subscriber, {
-          id: form.id,
-        })
-        .catch(() => {
-          throw Error("無網址資料，請先進行網址建檔");
-        });
-
+      const subscriber = await db.postgreEm.findOneOrFail(Subscriber, form.id);
       const newArtists = form.artists.map((artist) => {
-        const newArtist = manager.create(Artist, {
+        return db.postgreEm.create(Artist, {
           artist: artist.name,
           mark: artist.mark,
+          subscriber: subscriber,
         });
-        newArtist.subscriber = subscriber;
-        return newArtist;
       });
 
-      await manager.insert(Artist, newArtists).catch((err) => {
+      await db.postgreEm.insertMany(Artist, newArtists).catch((err) => {
         logger.error("新增繪師時發生錯誤\n" + err);
         throw Error("新增錯誤，可能因資料庫中已有該繪師");
       });
@@ -67,7 +61,7 @@ artists
     sendWebhook(
       webhooks.subscribe,
       "訂閱通知",
-      {embeds: [embed]},
+      { embeds: [embed] },
       form.id, //
     ).catch((err) => logger.error("發送新增繪師通知時發生錯誤\n" + err));
 
@@ -77,14 +71,18 @@ artists
   // edit artist
   .patch(verifyForm, async (req, res, next) => {
     const form: FormArtist = req.body;
-    const manager = postgreDataSource.manager;
 
     try {
-      await manager.update(
-        Artist,
-        {artist: form.artists[0].artist},
-        {artist: form.artists[0].name, mark: form.artists[0].mark},
-      );
+      db.createContext(db.postgreEm, async (em) => {
+        const ref = await em.findOneOrFail(Artist, {
+          artist: form.artists[0].artist,
+        });
+        wrap(ref).assign({
+          artist: form.artists[0].name,
+          mark: form.artists[0].mark,
+        });
+        await em.flush();
+      });
       next();
     } catch (err: any) {
       res.status(405).send("資料庫發生錯誤。");
@@ -97,18 +95,14 @@ artists
   // update artist
   .notify(upload.array("attachments[]"), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
-    const manager = postgreDataSource.manager;
+    const em = db.postgreEm;
     let status = Status[form.status];
 
     try {
-      await manager
-        .createQueryBuilder()
-        .update(Artist)
-        .where("artist IN (:...artistNames)", {artistNames: form.artist})
-        .set({
-          lastUpdateTime: getTime().toJSDate(),
-          status: status,
-        })
+      await em
+        .createQueryBuilder(Artist)
+        .update({ lastUpdateTime: getTime().toJSDate(), status: status })
+        .where({ artist: { $in: form.artist } })
         .execute();
       next();
     } catch (err: any) {
@@ -128,20 +122,19 @@ artists
         },
       ];
       if (form.mark)
-        fields.push({name: "備註", value: form.mark, inline: true});
+        fields.push({ name: "備註", value: form.mark, inline: true });
       if (form.file_link)
-        fields.push({name: "檔案連結", value: form.file_link});
+        fields.push({ name: "檔案連結", value: form.file_link });
 
       let title: string, color: ColorResolvable;
       switch (status) {
         case UpdateStatus.normal:
-          const subscriber = await manager.findOneOrFail(Subscriber, {
-            select: {preview: true, download: true},
-            where: {id: form.id},
+          const subscriber = await db.postgreEm.findOneOrFail(Subscriber, {
+            id: form.id,
           });
           if (subscriber.preview)
-            fields.push({name: "預覽", value: subscriber.preview});
-          fields.push({name: "下載", value: subscriber.download});
+            fields.push({ name: "預覽", value: subscriber.preview });
+          fields.push({ name: "下載", value: subscriber.download });
           title = "繪師更新";
           color = "BLUE";
           break;
@@ -167,36 +160,46 @@ artists
   })
 
   // change subscriber
-  .merge(upload.none(), verifyIsmanager, async (req, res, next) => {
+  .merge(upload.none(), verifyIsManager, async (req, res, next) => {
     const form: FormUpdate = req.body;
-    const manager = postgreDataSource.manager;
     logger.debug(JSON.stringify(form, null, 2));
 
     try {
-      const oldSubscriber = await manager
-        .findOneByOrFail(Subscriber, {
+      // attempt to get new subscriber data
+      let [newSubscriber, error] = await asyncExecute(
+        db.postgreEm.findOneOrFail(Subscriber, {
           id: form.subscriber,
-        })
-        .catch((err) => {
-          throw Error("取得目標訂閱者失敗\n" + err);
-        });
+        }),
+      );
+      if (error) {
+        if (error instanceof NotFoundError) {
+          res.status(405).send("該訂閱者未建檔");
+        }
+        logger.error(`更改訂閱者(取得新訂閱者資料)時發生錯誤\n` + error);
+        res.status(405).send("資料庫錯誤");
+        return;
+      }
 
-      await manager
-        .createQueryBuilder()
-        .update(Artist)
-        .where("artist IN (:...artistNames)", {artistNames: form.artist})
-        .set({
-          subscriber: oldSubscriber,
-          lastUpdateTime: getTime().toJSDate(),
-          status: UpdateStatus.newSubscribe,
-        })
-        .execute()
-        .catch((err) => {
-          throw Error("update時發生錯誤\n" + err);
-        });
+      // update artists data
+      [, error] = await asyncExecute(
+        db.postgreEm
+          .createQueryBuilder(Artist)
+          .update({
+            subscriber: newSubscriber,
+            lastUpdateTime: getTime().toJSDate(),
+            status: UpdateStatus.newSubscribe,
+          })
+          .where({ artist: { $in: form.artist } })
+          .execute(),
+      );
+      if (error) {
+        logger.error(`更改訂閱者(更新資料)時發生錯誤\n` + error);
+        res.status(405).send("資料庫錯誤");
+      }
+
       next();
     } catch (err: any) {
-      logger.error("繪師更新時發生錯誤\n" + err);
+      logger.error("更改繪師訂閱者時發生錯誤\n" + err);
       res.status(405).send("資料庫發生錯誤。");
       return;
     }
@@ -206,22 +209,19 @@ artists
     embed.addField("繪師", `\`${form.artist}\``);
     embed.addField("原訂閱者", form.id);
     embed.addField("新訂閱者", form.subscriber!);
-    await sendWebhook(webhooks.subscribe, "訂閱通知", {embeds: [embed]});
+    await sendWebhook(webhooks.subscribe, "訂閱通知", { embeds: [embed] });
   })
 
   // delete artist
   .delete(upload.none(), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
-    const manager = postgreDataSource.manager;
 
     try {
-      await manager
-        .createQueryBuilder()
+      await db.postgreEm
+        .createQueryBuilder(Artist)
         .delete()
-        .from(Artist)
-        .where("artist IN (:...artistNames)", {artistNames: form.artist})
+        .where({ artist: { $in: form.artist } })
         .execute();
-      next();
     } catch (err: any) {
       logger.error(`刪除繪師資料[${form.artist}]時發生錯誤\n${err}`);
       res.status(405).send("資料庫發生錯誤。");
@@ -231,14 +231,16 @@ artists
     try {
       const embed = await createEmbed("繪師資料刪除", "RED", form.id);
       embed.addField("繪師", form.artist.map((d) => inlineCode(d)).join("\n"));
-      await sendWebhook(webhooks.subscribe, "資料刪除", {embeds: [embed]});
+      await sendWebhook(webhooks.subscribe, "資料刪除", { embeds: [embed] });
     } catch (err) {
       logger.error("進行刪除通知時發生錯誤\n" + err);
     }
+
+    next();
   });
 
-artists.use(async (req, res) => {
-  await getdata()
+artists.use(async (_req, res) => {
+  await getData()
     .then((data) => res.json(data?.artists))
     .catch((err) => {
       logger.error(`更新資料錯誤。\n${err}`);
@@ -246,4 +248,4 @@ artists.use(async (req, res) => {
     });
 });
 
-export {artists};
+export { artists };

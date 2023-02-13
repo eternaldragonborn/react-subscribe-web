@@ -1,3 +1,4 @@
+// @ts-ignore
 import {Secret} from "jsonwebtoken";
 import {DateTime} from "luxon";
 import multer from "multer";

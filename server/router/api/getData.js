@@ -1,6 +1,6 @@
-import {Router} from "express";
+import { Router } from "express";
 import _ from "lodash";
-import {loaddata, verifyToken} from "../../modules";
+import { loadData, verifyToken } from "../../modules";
 
 const data = Router();
 
@@ -14,7 +14,7 @@ data.get("/overview", async (req, res) => {
   }
 
   try {
-    let data = await loaddata();
+    let data = await loadData();
 
     if (user.status === "user") data = _.omit(data, ["subscribers"]);
     res.json(data);
@@ -24,4 +24,4 @@ data.get("/overview", async (req, res) => {
   }
 });
 
-export {data};
+export { data };
