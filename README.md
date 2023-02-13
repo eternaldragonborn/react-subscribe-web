@@ -12,6 +12,8 @@
 - [ ] 檢查資料是否同步(subscribeData 新增最後更新時間)
 - [ ] 繪師更新紀錄
 - [ ] refactor array/object to Set/Map
+- [ ] refactor all to TS
+- [ ] use React query
 
 ### issue
 

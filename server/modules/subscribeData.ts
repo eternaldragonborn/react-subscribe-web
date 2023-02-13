@@ -18,8 +18,6 @@ import { db } from "./databases";
 import { getUser, getUserName, sendWebhook } from "./discordbot";
 import { logger } from "./logger";
 import { Subscriber, Artist } from "../entity/postgreSQL";
-import { result } from "lodash";
-import { wrap } from "@mikro-orm/core";
 
 function convertArtistData(data: Artist): ArtistData {
   // let subscriber = wrap(data.subscriber).init();
@@ -84,11 +82,12 @@ export async function getData() {
     );
     data.artists = [];
     for (const artist of artists) {
-      let subscriber = await artist.subscriber?.load("id");
+      let subscriberId = await artist.subscriber!.load("id");
 
       data.artists.push({
         ...convertArtistData(artist),
-        subscriber: userNames[subscriber ?? ""] ?? "unknown",
+        id: subscriberId,
+        subscriber: userNames[subscriberId] ?? "unknown",
       });
     }
 
