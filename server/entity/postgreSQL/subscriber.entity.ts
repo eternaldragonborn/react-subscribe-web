@@ -1,5 +1,6 @@
 import {
   Cascade,
+  Collection,
   Entity,
   OneToMany,
   PrimaryKey,
@@ -22,7 +23,7 @@ export class Subscriber {
     eager: true,
     cascade: [Cascade.REMOVE],
   })
-    artists?: Artist[];
+    artists: Collection<Artist> = new Collection<Artist>(this);
 
   constructor(id: string, download: string, preview?: string) {
     this.id = id;

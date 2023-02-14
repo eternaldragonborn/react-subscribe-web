@@ -1,19 +1,8 @@
 import { blockQuote, inlineCode } from "@discordjs/builders";
-import {
-  MessageActionRow,
-  MessageButton,
-  WebhookMessageOptions,
-} from "discord.js";
+import { MessageActionRow, MessageButton, WebhookMessageOptions } from "discord.js";
 import { DateTime } from "luxon";
 import { UpdateStatus } from "../../types";
-import {
-  ArtistData,
-  getTime,
-  siteURL,
-  SubscribeData,
-  SubscriberData,
-  webhooks,
-} from "../constant";
+import { ArtistData, getTime, siteURL, SubscribeData, SubscriberData, webhooks } from "../constant";
 import { db } from "./databases";
 import { getUser, getUserName, sendWebhook } from "./discordbot";
 import { logger } from "./logger";
@@ -23,14 +12,13 @@ function convertArtistData(data: Artist): ArtistData {
   // let subscriber = wrap(data.subscriber).init();
 
   const result = {
-    artist: data.artist,
+    artist: data.name,
     mark: data.mark,
     // id: data.subscriber.id,
   } as ArtistData;
 
   //#region update status/date
-  const diffDay = -DateTime.fromJSDate(data.lastUpdateTime!).diffNow("days")
-    .days;
+  const diffDay = -DateTime.fromJSDate(data.lastUpdateTime!).diffNow("days").days;
   if (diffDay >= 30 && data.status !== UpdateStatus.unSubscribed) {
     result.status = "未更新";
   } else if (data.status === UpdateStatus.newSubscribe) {
@@ -61,11 +49,11 @@ async function convertSubscriberData(data: Subscriber) {
   return { ...result, name };
 }
 
-//TODO: refactor to mikro-orm
 export async function getData() {
   const data = { subscribers: {} } as SubscribeData;
   const userNames: { [id: string]: string } = {};
   const em = db.postgreEm.fork();
+
   try {
     const subscribers = await em.find(Subscriber, {});
 
@@ -75,11 +63,7 @@ export async function getData() {
       data.subscribers[subscriber.id] = convertedData;
     }
 
-    const artists = await em.find(
-      Artist,
-      {},
-      { orderBy: { lastUpdateTime: "DESC" } },
-    );
+    const artists = await em.find(Artist, {}, { orderBy: { lastUpdateTime: "DESC" } });
     data.artists = [];
     for (const artist of artists) {
       const subscriberId = await artist.subscriber!.load("id");
@@ -139,9 +123,7 @@ export async function checkUpdate() {
       const lastUpdate =
         (artist.status === UpdateStatus.newSubscribe ? "新增後未更新，" : "") +
         DateTime.fromJSDate(artist.lastUpdateTime!).toFormat("MM/dd");
-      filteredData[subscriberId].push(
-        `${inlineCode(artist.artist)}(${lastUpdate})`,
-      );
+      filteredData[subscriberId].push(`${inlineCode(artist.name)}(${lastUpdate})`);
     }
 
     // subscriber message format
@@ -159,20 +141,14 @@ export async function checkUpdate() {
 
     // link button
     const component = new MessageActionRow().addComponents(
-      new MessageButton()
-        .setLabel("更新請使用網站")
-        .setStyle("LINK")
-        .setURL(siteURL),
+      new MessageButton().setLabel("更新請使用網站").setStyle("LINK").setURL(siteURL),
     );
 
     // send message
     await sendWebhook(
       webhooks.updateNotify,
       "讓我們看看是哪些小王八蛋還沒更新",
-      contents.map(
-        (content) =>
-          ({ content, components: [component] } as WebhookMessageOptions),
-      ),
+      contents.map((content) => ({ content, components: [component] } as WebhookMessageOptions)),
     ).catch((error) => {
       throw { message: "送出未更新通知錯誤", error };
     });

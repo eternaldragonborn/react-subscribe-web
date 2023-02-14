@@ -27,3 +27,9 @@ rules:
     - always
   no-case-declarations:
     - off
+  space-before-function-paren:
+    - warning
+  keyword-spacing:
+    - warning
+  comma-spacing:
+    - warning

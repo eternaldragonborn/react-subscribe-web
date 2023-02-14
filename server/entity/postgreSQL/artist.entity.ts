@@ -13,7 +13,7 @@ import { getTime } from "../../constant";
 @Entity({ tableName: "artists" })
 export class Artist {
   @PrimaryKey({ fieldName: "artist" })
-    artist!: string;
+    name!: string;
 
   @ManyToOne({
     entity: () => Subscriber,
@@ -37,7 +37,7 @@ export class Artist {
     status?: UpdateStatus = UpdateStatus.newSubscribe;
 
   constructor(artist: string, status: UpdateStatus, mark?: string) {
-    this.artist = artist;
+    this.name = artist;
     this.status = status;
     this.mark = mark;
   }

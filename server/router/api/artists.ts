@@ -33,7 +33,7 @@ artists
       const subscriber = await db.postgreEm.findOneOrFail(Subscriber, form.id);
       const newArtists = form.artists.map((artist) => {
         return db.postgreEm.create(Artist, {
-          artist: artist.name,
+          name: artist.name,
           mark: artist.mark,
           subscriber: subscriber,
         });
@@ -82,10 +82,10 @@ artists
     try {
       db.createContext(db.postgreEm, async (em) => {
         const ref = await em.findOneOrFail(Artist, {
-          artist: form.artists[0].artist,
+          name: form.artists[0].artist,
         });
         wrap(ref).assign({
-          artist: form.artists[0].name,
+          name: form.artists[0].name,
           mark: form.artists[0].mark,
         });
         await em.flush();
@@ -109,7 +109,7 @@ artists
       await em
         .createQueryBuilder(Artist)
         .update({ lastUpdateTime: getTime().toJSDate(), status: status })
-        .where({ artist: { $in: form.artist } })
+        .where({ name: { $in: form.artist } })
         .execute();
       next();
     } catch (err: any) {
@@ -197,7 +197,7 @@ artists
             lastUpdateTime: getTime().toJSDate(),
             status: UpdateStatus.newSubscribe,
           })
-          .where({ artist: { $in: form.artist } })
+          .where({ name: { $in: form.artist } })
           .execute(),
       );
       if (error) {
@@ -229,7 +229,7 @@ artists
       await em
         .createQueryBuilder(Artist)
         .delete()
-        .where({ artist: { $in: form.artist } })
+        .where({ name: { $in: form.artist } })
         .execute();
     } catch (err: any) {
       logger.error(`刪除繪師資料[${form.artist}]時發生錯誤\n${err}`);

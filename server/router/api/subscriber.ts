@@ -17,7 +17,6 @@ import {
   verifyForm,
   verifyIsManager,
   verifyIsSubscriber,
-  verifyToken,
   db,
   asyncExecute,
 } from "../../modules";
@@ -54,7 +53,6 @@ subscriber
 
   // delete subscriber
   .delete(verifyIsManager, async (req, res) => {
-    const author = await verifyToken(req.headers);
     const { subscriber: subscriberId }: { subscriber: string } = req.body;
     let artists: string;
 
@@ -62,7 +60,7 @@ subscriber
       const subscriber = await db.postgreEm.findOneOrFail(Subscriber, {
         id: subscriberId,
       });
-      artists = (subscriber.artists ?? []).join("\n");
+      artists = subscriber.artists.toArray().map(artist => inlineCode(artist.name)).join("\n");
       await db.postgreEm.removeAndFlush(subscriber);
       logger.trace(`訂閱者(${subscriberId})資料刪除`);
 
@@ -75,8 +73,7 @@ subscriber
     }
 
     try {
-      // const user = await getUser(subscriberId);
-      const embed = await createEmbed("訂閱者資料刪除", "DARK_RED", author?.id);
+      const embed = await createEmbed("訂閱者資料刪除", "DARK_RED");
       embed.addField("訂閱者", subscriberId);
       if (artists.length) embed.addField("包含以下繪師", artists);
 
