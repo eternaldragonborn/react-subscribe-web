@@ -1,4 +1,3 @@
-// @ts-ignore
 import {Secret} from "jsonwebtoken";
 import {DateTime} from "luxon";
 import multer from "multer";
@@ -85,7 +84,7 @@ export const databaseConfig = {
     user: "EternalDragonborn",
     pass: process.env.MONGO_PWD,
     authSource: DEV_MODE ? undefined : "admin",
-    ssl: !Boolean(DEV_MODE),
+    ssl: !DEV_MODE,
   },
 };
 //#endregion

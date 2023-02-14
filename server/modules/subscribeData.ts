@@ -29,7 +29,7 @@ function convertArtistData(data: Artist): ArtistData {
   } as ArtistData;
 
   //#region update status/date
-  const diffDay = -DateTime.fromJSDate(data.lastUpdateTime!!).diffNow("days")
+  const diffDay = -DateTime.fromJSDate(data.lastUpdateTime!).diffNow("days")
     .days;
   if (diffDay >= 30 && data.status !== UpdateStatus.unSubscribed) {
     result.status = "未更新";
@@ -69,8 +69,8 @@ export async function getData() {
   try {
     const subscribers = await em.find(Subscriber, {});
 
-    for (let subscriber of subscribers) {
-      let convertedData = await convertSubscriberData(subscriber);
+    for (const subscriber of subscribers) {
+      const convertedData = await convertSubscriberData(subscriber);
       userNames[subscriber.id] = convertedData.name;
       data.subscribers[subscriber.id] = convertedData;
     }
@@ -82,7 +82,7 @@ export async function getData() {
     );
     data.artists = [];
     for (const artist of artists) {
-      let subscriberId = await artist.subscriber!.load("id");
+      const subscriberId = await artist.subscriber!.load("id");
 
       data.artists.push({
         ...convertArtistData(artist),
@@ -132,7 +132,7 @@ export async function checkUpdate() {
 
     // artist message format
     const filteredData: { [subscriber: string]: string[] } = {};
-    for (let artist of artistList) {
+    for (const artist of artistList) {
       const subscriberId = await artist.subscriber!.load("id");
       if (!filteredData[subscriberId]) filteredData[subscriberId] = [];
 
@@ -145,7 +145,7 @@ export async function checkUpdate() {
     }
 
     // subscriber message format
-    for (let data in filteredData) {
+    for (const data in filteredData) {
       const message = `${data}：${filteredData[data].join("、")}\n`;
       // length check
       if (content.length + message.length > 1990) {

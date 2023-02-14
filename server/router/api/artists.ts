@@ -103,7 +103,7 @@ artists
   .notify(upload.array("attachments[]"), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
     const em = db.postgreEm.fork();
-    let status = Status[form.status];
+    const status = Status[form.status];
 
     try {
       await em
@@ -135,24 +135,24 @@ artists
 
       let title: string, color: ColorResolvable;
       switch (status) {
-        case UpdateStatus.normal:
-          const subscriber = await db.postgreEm.findOneOrFail(Subscriber, {
-            id: form.id,
-          });
-          if (subscriber.preview)
-            fields.push({ name: "預覽", value: subscriber.preview });
-          fields.push({ name: "下載", value: subscriber.download });
-          title = "繪師更新";
-          color = "BLUE";
-          break;
-        case UpdateStatus.noUpdate:
-          title = "繪師停更";
-          color = "DARK_GREY";
-          break;
-        case UpdateStatus.unSubscribed:
-          title = "繪師取消訂閱";
-          color = "DARK_RED";
-          break;
+      case UpdateStatus.normal:
+        const subscriber = await db.postgreEm.findOneOrFail(Subscriber, {
+          id: form.id,
+        });
+        if (subscriber.preview)
+          fields.push({ name: "預覽", value: subscriber.preview });
+        fields.push({ name: "下載", value: subscriber.download });
+        title = "繪師更新";
+        color = "BLUE";
+        break;
+      case UpdateStatus.noUpdate:
+        title = "繪師停更";
+        color = "DARK_GREY";
+        break;
+      case UpdateStatus.unSubscribed:
+        title = "繪師取消訂閱";
+        color = "DARK_RED";
+        break;
       }
       const embed = await createEmbed(title!, color!, form.id);
       embed.addFields(fields);
@@ -183,7 +183,7 @@ artists
         if (error instanceof NotFoundError) {
           res.status(405).send("該訂閱者未建檔");
         }
-        logger.error(`更改訂閱者(取得新訂閱者資料)時發生錯誤\n` + error);
+        logger.error("更改訂閱者(取得新訂閱者資料)時發生錯誤\n" + error);
         res.status(405).send("資料庫錯誤");
         return;
       }
@@ -201,7 +201,7 @@ artists
           .execute(),
       );
       if (error) {
-        logger.error(`更改訂閱者(更新資料)時發生錯誤\n` + error);
+        logger.error("更改訂閱者(更新資料)時發生錯誤\n" + error);
         res.status(405).send("資料庫錯誤");
       }
 

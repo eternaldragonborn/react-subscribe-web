@@ -84,8 +84,8 @@ async function sendWebhook(
 
   const hooks: string[] = Array.isArray(webhook) ? webhook : [webhook];
 
-  for (let hook of hooks) {
-    for (let payload of payloads) {
+  for (const hook of hooks) {
+    for (const payload of payloads) {
       if (!payload) break;
       const webhook = await bot.fetchWebhook(hook);
       await webhook.send(payload);

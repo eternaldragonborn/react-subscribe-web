@@ -10,19 +10,19 @@ import { Artist } from "./artist.entity";
 @Entity({ tableName: "subscribers" })
 export class Subscriber {
   @PrimaryKey({ fieldName: "subscriber" })
-  id!: string;
+    id!: string;
 
   @Property({ fieldName: "preview_url" })
-  preview?: string;
+    preview?: string;
 
   @Property({ fieldName: "download_url" })
-  download!: string;
+    download!: string;
 
   @OneToMany(() => Artist, (artist) => artist.subscriber, {
     eager: true,
     cascade: [Cascade.REMOVE],
   })
-  artists?: Artist[];
+    artists?: Artist[];
 
   constructor(id: string, download: string, preview?: string) {
     this.id = id;

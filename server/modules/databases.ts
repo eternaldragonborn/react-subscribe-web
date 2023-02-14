@@ -68,10 +68,8 @@ class Database {
   }
 
   async init() {
-    let error: any;
-
     // init redis
-    [, error] = await asyncExecute(this.redis.connect());
+    const [, error] = await asyncExecute(this.redis.connect());
     if (error) {
       logger.error("failed to connect to Redis\n" + error);
       throw error;

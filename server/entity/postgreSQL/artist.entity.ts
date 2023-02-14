@@ -13,7 +13,7 @@ import { getTime } from "../../constant";
 @Entity({ tableName: "artists" })
 export class Artist {
   @PrimaryKey({ fieldName: "artist" })
-  artist!: string;
+    artist!: string;
 
   @ManyToOne({
     entity: () => Subscriber,
@@ -21,20 +21,20 @@ export class Artist {
     ref: true,
     fieldName: "subscriber",
   })
-  subscriber?: IdentifiedReference<Subscriber>;
+    subscriber?: IdentifiedReference<Subscriber>;
 
   @Property({
     fieldName: "lastUpdateTime",
     onUpdate: () => getTime(),
   })
-  lastUpdateTime?: Date = getTime().toJSDate();
+    lastUpdateTime?: Date = getTime().toJSDate();
 
   @Property()
-  mark?: string;
+    mark?: string;
 
   @Property({ default: UpdateStatus.newSubscribe })
   @Enum(() => UpdateStatus)
-  status?: UpdateStatus = UpdateStatus.newSubscribe;
+    status?: UpdateStatus = UpdateStatus.newSubscribe;
 
   constructor(artist: string, status: UpdateStatus, mark?: string) {
     this.artist = artist;

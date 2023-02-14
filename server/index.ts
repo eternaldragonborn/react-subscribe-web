@@ -20,6 +20,7 @@ if (process.env["DEV_MODE"]) {
   await bot.login(process.env.DISCORD_TOKEN);
   await getData();
 
+  // middleware setting
   app.set("trust proxy", 1);
   app.use(parser.json()); // enable urlencoding
   app.use(parser.urlencoded({ extended: false }));
@@ -29,7 +30,6 @@ if (process.env["DEV_MODE"]) {
   });
   const port = process.env.PORT || 8080;
 
-  // app.use()
   mountRouter(app);
 
   app.listen(port, () => {
