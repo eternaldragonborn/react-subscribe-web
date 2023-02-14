@@ -1,19 +1,19 @@
-import {Add, Edit} from "@mui/icons-material";
-import {Button, DialogContentText, TextField} from "@mui/material";
-import {useFormik} from "formik";
-import {useCallback, useContext, useEffect} from "react";
+import { Add, Edit } from "@mui/icons-material";
+import { Button, DialogContentText, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import { useCallback, useContext, useEffect } from "react";
 import * as yup from "yup";
-import {FormSubscriber} from "../../../types";
-import {apiRequest, AuthContext, getRequestError} from "../../constants";
-import {FormDialog, useFormDialog} from "../Forms";
-import {Kbd} from "../Utils";
+import { FormSubscriber } from "../../../types";
+import { apiRequest, AuthContext, getRequestError } from "../../constants";
+import { FormDialog, useFormDialog } from "../Forms";
+import { Kbd } from "../Utils";
 
-export function ModalEditUrl({id}: { id: string }) {
+export function ModalEditUrl({ id }: { id: string }) {
   const {
     useSubscribeData: [subscribeData, setData],
   } = useContext(AuthContext);
   const url = subscribeData.subscribers[id];
-  const {open, onClose, onOpen, useSubmitResult} =
+  const { open, onClose, onOpen, useSubmitResult } =
     useFormDialog<HTMLTextAreaElement>();
   const formik = useFormik<FormSubscriber>({
     initialValues: {
@@ -34,12 +34,12 @@ export function ModalEditUrl({id}: { id: string }) {
               status: "success",
               action,
             });
-            setData({...subscribeData, subscribers: res.data});
-          } else setResult({status: "warning", action});
+            setData({ ...subscribeData, subscribers: res.data });
+          } else setResult({ status: "warning", action });
           onClose();
         })
         .catch((err) =>
-          setResult({status: "error", action, reason: getRequestError(err)}),
+          setResult({ status: "error", action, reason: getRequestError(err) }),
         );
     },
     validationSchema: yup.object({
@@ -67,7 +67,7 @@ export function ModalEditUrl({id}: { id: string }) {
   return (
     <>
       <Button
-        startIcon={url ? <Edit/> : <Add/>}
+        startIcon={url ? <Edit /> : <Add />}
         color={url ? "info" : "success"}
         type="button"
         variant="contained"

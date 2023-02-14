@@ -1,4 +1,4 @@
-import {AddPhotoAlternate} from "@mui/icons-material";
+import { AddPhotoAlternate } from "@mui/icons-material";
 import {
   Button,
   Collapse,
@@ -7,12 +7,12 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import {FormikErrors, useFormik} from "formik";
-import {useEffect} from "react";
-import {TransitionGroup} from "react-transition-group";
+import { FormikErrors, useFormik } from "formik";
+import { useEffect } from "react";
+import { TransitionGroup } from "react-transition-group";
 import * as yup from "yup";
-import {FieldPackage, FormUploadPackage} from "../../../types";
-import {apiRequest, getRequestError} from "../../constants";
+import { FieldPackage, FormUploadPackage } from "../../../types";
+import { apiRequest, getRequestError } from "../../constants";
 import {
   FileUpload,
   FormDialog,
@@ -20,7 +20,7 @@ import {
   useFormDialog,
 } from "../Forms";
 
-const initialValue: FieldPackage = {author: "", mark: "", file_link: ""};
+const initialValue: FieldPackage = { author: "", mark: "", file_link: "" };
 const validationSchema = yup.object({
   packages: yup.array().of(
     yup.object({
@@ -32,7 +32,7 @@ const validationSchema = yup.object({
 const action = "圖包上傳";
 
 export function ModalPackUpload() {
-  const {open, onOpen, onClose, useSubmitResult} = useFormDialog();
+  const { open, onOpen, onClose, useSubmitResult } = useFormDialog();
   const formik = useFormik<FormUploadPackage>({
     initialValues: {
       packages: [initialValue],
@@ -48,11 +48,11 @@ export function ModalPackUpload() {
       await apiRequest
         .post("/subscriber/package", data)
         .then(() => {
-          setResult({status: "success", action});
+          setResult({ status: "success", action });
           onClose();
         })
         .catch((err) =>
-          setResult({status: "error", action, reason: getRequestError(err)}),
+          setResult({ status: "error", action, reason: getRequestError(err) }),
         );
     },
   });
@@ -63,7 +63,7 @@ export function ModalPackUpload() {
 
   return (
     <>
-      <Button color="info" startIcon={<AddPhotoAlternate/>} onClick={onOpen}>
+      <Button color="info" startIcon={<AddPhotoAlternate />} onClick={onOpen}>
         圖包上傳
       </Button>
 
@@ -74,7 +74,7 @@ export function ModalPackUpload() {
         submitForm={formik.submitForm}
         isSubmitting={formik.isSubmitting}
         useSubmitResult={useSubmitResult}
-        contentDivider={<Divider/>}
+        contentDivider={<Divider />}
       >
         <DialogContentText>
           此功能為上傳<strong>非常態訂閱</strong>

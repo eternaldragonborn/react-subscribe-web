@@ -5,7 +5,7 @@ import { Router } from "express";
 
 import { FieldBook, FieldPackage, FormSubscriber } from "../../../types";
 import { defaultAvatar, emojis, upload, webhooks } from "../../constant";
-import { Artist, BookRecord, Subscriber } from "../../entity";
+import { BookRecord, Subscriber } from "../../entity";
 import {
   bot,
   createEmbed,
@@ -94,9 +94,11 @@ subscriber.post(
   async (req, res) => {
     const id = `<@${getTokenId(req.headers)}>`;
     const form: FieldPackage[] = JSON.parse(req.body.packages);
+    const em = db.postgreEm.fork();
+
     try {
       const [subscriber, error] = await asyncExecute(
-        db.postgreEm.findOneOrFail(Subscriber, {
+        em.findOneOrFail(Subscriber, {
           id,
         }),
       );
@@ -149,6 +151,7 @@ subscriber.post(
     const form: FieldBook = req.body;
     const files = (req.files as Express.Multer.File[])[0];
     const id = getTokenId(req.headers);
+    const em = db.mongoEm.fork();
 
     try {
       if (!files) throw { message: "無預覽圖" };
@@ -183,21 +186,19 @@ subscriber.post(
       }
 
       // fileing
-      await db.redis.sAdd("msg_ids", msg.id).catch((error) => {
-        throw { message: "資料庫錯誤", error };
-      });
-
-      const book = db.postgreEm.create(BookRecord, {
+      const book = em.create(BookRecord, {
         _id: msg.id,
         url: form.url,
       });
-      await db.postgreEm.persistAndFlush(book).catch((error) => {
+      await em.persistAndFlush(book).catch((error) => {
+        msg?.delete();
         throw { message: "資料庫錯誤", error };
       });
     } catch (err: any) {
       logger.error("本本新增失敗，" + err.message + "\n" + (err.error ?? ""));
       res.status(405).send(err.message);
     }
+    res.sendStatus(200);
   },
 );
 

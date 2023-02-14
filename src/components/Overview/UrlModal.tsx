@@ -1,4 +1,4 @@
-import {Close} from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import {
   Box,
   Dialog,
@@ -8,9 +8,9 @@ import {
   Typography,
   Zoom,
 } from "@mui/material";
-import {useEffect, useState} from "react";
-import {urlReplace} from "../../constants";
-import {State} from "../../constants";
+import { useEffect, useState } from "react";
+import { urlReplace } from "../../constants";
+import { State } from "../../constants";
 
 interface UrlData {
   type: "預覽" | "下載";
@@ -45,23 +45,23 @@ export default function UrlModal(props: Props) {
       onClose={() => setOpen(false)}
       maxWidth="sm"
       fullWidth
-      sx={{wordBreak: "break-all"}}
+      sx={{ wordBreak: "break-all" }}
     >
       <DialogTitle>
         <Box display="flex" alignItems="center">
-          <Typography sx={{flexGrow: 1}} variant="inherit" color="inherit">
+          <Typography sx={{ flexGrow: 1 }} variant="inherit" color="inherit">
             {`${data?.artist} 的 ${data?.type}`}
           </Typography>
 
           <IconButton onClick={() => setOpen(false)}>
-            <Close/>
+            <Close />
           </IconButton>
         </Box>
       </DialogTitle>
 
       <DialogContent
         dividers
-        dangerouslySetInnerHTML={{__html: urlReplace(data?.data)}}
+        dangerouslySetInnerHTML={{ __html: urlReplace(data?.data) }}
       />
     </Dialog>
   );

@@ -26,16 +26,15 @@ export class Artist {
   @Property({
     fieldName: "lastUpdateTime",
     onUpdate: () => getTime(),
-    onCreate: getTime,
   })
-  lastUpdateTime?: Date;
+  lastUpdateTime?: Date = getTime().toJSDate();
 
   @Property()
   mark?: string;
 
   @Property({ default: UpdateStatus.newSubscribe })
   @Enum(() => UpdateStatus)
-  status?: UpdateStatus;
+  status?: UpdateStatus = UpdateStatus.newSubscribe;
 
   constructor(artist: string, status: UpdateStatus, mark?: string) {
     this.artist = artist;

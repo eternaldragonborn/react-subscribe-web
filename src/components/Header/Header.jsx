@@ -1,10 +1,10 @@
-import {Logout} from "@mui/icons-material";
-import {Box, Button, Container, Stack, Tab, Tabs} from "@mui/material";
-import {useConfirm} from "material-ui-confirm";
-import {useContext, useEffect, useState} from "react";
-import {Link as RouterLink, Outlet, useLocation} from "react-router-dom";
-import {AuthContext, discordOauthURL, siteURL} from "../../constants";
-import {DiscordIcon, DragonIcon, ErrorBoundary} from "../Utils";
+import { Logout } from "@mui/icons-material";
+import { Box, Button, Container, Stack, Tab, Tabs } from "@mui/material";
+import { useConfirm } from "material-ui-confirm";
+import { useContext, useEffect, useState } from "react";
+import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { AuthContext, discordOauthURL, siteURL } from "../../constants";
+import { DiscordIcon, DragonIcon, ErrorBoundary } from "../Utils";
 
 export function Header() {
   const {
@@ -24,18 +24,18 @@ export function Header() {
       <header>
         <Container>
           <Box
-            sx={{display: "flex", py: "0.5rem"}}
+            sx={{ display: "flex", py: "0.5rem" }}
             justifyItems="center"
             alignItems="center"
           >
             <img
               src={DragonIcon}
               alt=""
-              style={{height: "40px", width: "auto", paddingRight: "0.5rem"}}
+              style={{ height: "40px", width: "auto", paddingRight: "0.5rem" }}
             />
 
             <ErrorBoundary>
-              <Tabs sx={{flexGrow: 1}} value={page}>
+              <Tabs sx={{ flexGrow: 1 }} value={page}>
                 <Tab
                   component={RouterLink}
                   to="/subscribe-sys"
@@ -50,22 +50,21 @@ export function Header() {
                     value="subscriber"
                   />
                 )}
-                <Tab label="問題/建議回報" disabled/>
+                <Tab label="問題/建議回報" disabled />
               </Tabs>
 
               <Stack spacing={2} justifyContent="center">
                 {user ? (
                   <Button
                     variant="contained"
-                    startIcon={<Logout/>}
+                    startIcon={<Logout />}
                     onClick={() => {
-                      confirm({description: "確定要登出嗎？", title: "登出"})
+                      confirm({ description: "確定要登出嗎？", title: "登出" })
                         .then(() => {
                           localStorage.removeItem("subscribe-web-token");
                           window.location.href = siteURL;
                         })
-                        .catch(() => {
-                        });
+                        .catch(() => {});
                     }}
                     color="error"
                   >
@@ -76,7 +75,7 @@ export function Header() {
                     variant="contained"
                     color="primary"
                     href={discordOauthURL}
-                    startIcon={<DiscordIcon/>}
+                    startIcon={<DiscordIcon />}
                   >
                     登入
                   </Button>
@@ -88,7 +87,7 @@ export function Header() {
       </header>
 
       <ErrorBoundary>
-        <Outlet/>
+        <Outlet />
       </ErrorBoundary>
     </>
   );

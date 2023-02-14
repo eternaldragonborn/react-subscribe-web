@@ -1,4 +1,4 @@
-import {DriveFolderUploadRounded, Help} from "@mui/icons-material";
+import { DriveFolderUploadRounded, Help } from "@mui/icons-material";
 import {
   Autocomplete,
   Button,
@@ -15,11 +15,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {Method} from "axios";
-import {FormikErrors, useFormik} from "formik";
-import {useCallback, useContext, useEffect} from "react";
+import { Method } from "axios";
+import { FormikErrors, useFormik } from "formik";
+import { useCallback, useContext, useEffect } from "react";
 import * as yup from "yup";
-import {FormUpdate, StatusOptions} from "../../../types";
+import { FormUpdate, StatusOptions } from "../../../types";
 import {
   apiRequest,
   AuthContext,
@@ -28,7 +28,7 @@ import {
   SubscriberPageContext,
   validateField,
 } from "../../constants";
-import {FileUpload, FormDialog, useFormDialog} from "../Forms";
+import { FileUpload, FormDialog, useFormDialog } from "../Forms";
 
 const StatusValues: { [status: string]: number } = {
   update: 0,
@@ -50,7 +50,7 @@ const validSchema = yup.object({
   }),
 });
 
-export default function ModalArtistUpdate({id}: { id: string }) {
+export default function ModalArtistUpdate({ id }: { id: string }) {
   const {
     useSubscribeData: [data, setData],
     useUser: [user],
@@ -59,7 +59,7 @@ export default function ModalArtistUpdate({id}: { id: string }) {
     useSort: [sortState],
     useSelected: [selected, setSelected],
   } = useContext(SubscriberPageContext);
-  const {open, onClose, onOpen, useSubmitResult} = useFormDialog();
+  const { open, onClose, onOpen, useSubmitResult } = useFormDialog();
   const formik = useFormik<FormUpdate>({
     initialValues: {
       id,
@@ -106,15 +106,15 @@ export default function ModalArtistUpdate({id}: { id: string }) {
         })
         .then((res) => {
           if (res.data) {
-            setSubmitResult({status: "success", action});
-            setData({...data, artists: res.data});
-          } else setSubmitResult({status: "warning", action});
+            setSubmitResult({ status: "success", action });
+            setData({ ...data, artists: res.data });
+          } else setSubmitResult({ status: "warning", action });
           formik.resetForm();
           setSelected([]);
         })
         .catch((err) => {
           const reason = getRequestError(err);
-          setSubmitResult({status: "error", action, reason});
+          setSubmitResult({ status: "error", action, reason });
         });
     },
   });
@@ -127,7 +127,7 @@ export default function ModalArtistUpdate({id}: { id: string }) {
 
   return (
     <>
-      <Button onClick={onOpen} startIcon={<DriveFolderUploadRounded/>}>
+      <Button onClick={onOpen} startIcon={<DriveFolderUploadRounded />}>
         更新繪師
       </Button>
 
@@ -239,7 +239,7 @@ export default function ModalArtistUpdate({id}: { id: string }) {
               <Typography align="center">
                 {"檔案連結"}
                 <Tooltip title="檔案的直接下載連結，若有多個檔案可輸入多行">
-                  <Help fontSize="inherit" color="primary"/>
+                  <Help fontSize="inherit" color="primary" />
                 </Tooltip>
               </Typography>
             }

@@ -1,4 +1,4 @@
-import {Add} from "@mui/icons-material";
+import { Add } from "@mui/icons-material";
 import {
   Button,
   Container,
@@ -17,11 +17,11 @@ import {
   useReducer,
   useState,
 } from "react";
-import {useParams} from "react-router-dom";
-import {AuthContext, SubscriberPageContext} from "../constants";
-import {tableSortReducer} from "../reducers";
-import {ModalEditUrl, TableHeader} from "./Subscriber";
-import {ErrorBoundary, TableLoading} from "./Utils";
+import { useParams } from "react-router-dom";
+import { AuthContext, SubscriberPageContext } from "../constants";
+import { tableSortReducer } from "../reducers";
+import { ModalEditUrl, TableHeader } from "./Subscriber";
+import { ErrorBoundary, TableLoading } from "./Utils";
 
 const ArtistTable = lazy(() => import("./Subscriber/TableBody"));
 const Modals = lazy(() => import("./Subscriber/Modals"));
@@ -41,7 +41,7 @@ export default function SubscriberPage() {
     direction: "desc",
   });
   const [selected, setSelected] = useState([]);
-  const useArtistEdit = useState({type: null});
+  const useArtistEdit = useState({ type: null });
   const [, setArtistData] = useArtistEdit;
   const urls = useCallback(
     () => subscribeData?.subscribers[id],
@@ -68,7 +68,7 @@ export default function SubscriberPage() {
       if (`<@${user.id}>` !== id && user.status !== "manager")
         setLoadStatus("forbidden");
       else {
-        sortDispatch({type: "SET_DATA", data});
+        sortDispatch({ type: "SET_DATA", data });
         setLoadStatus("success");
       }
     }
@@ -76,7 +76,7 @@ export default function SubscriberPage() {
   //#endregion
 
   return (
-    <Container sx={{height: "80vh"}}>
+    <Container sx={{ height: "80vh" }}>
       <SubscriberPageContext.Provider
         value={{
           useSort: [sortState, sortDispatch],
@@ -86,22 +86,22 @@ export default function SubscriberPage() {
       >
         <ErrorBoundary /* toolbox */>
           {loadStatus === "success" && user?.status !== "user" && (
-            <Stack direction="row" spacing={1} sx={{pb: 1}}>
+            <Stack direction="row" spacing={1} sx={{ pb: 1 }}>
               {urls() && (
                 <Suspense>
-                  <Modals id={id}/>
+                  <Modals id={id} />
 
                   <Button // add artist
                     color="success"
-                    startIcon={<Add/>}
-                    onClick={() => setArtistData({type: "add"})}
+                    startIcon={<Add />}
+                    onClick={() => setArtistData({ type: "add" })}
                   >
                     新增繪師
                   </Button>
                 </Suspense>
               )}
 
-              <ModalEditUrl id={id}/>
+              <ModalEditUrl id={id} />
             </Stack>
           )}
         </ErrorBoundary>
@@ -113,17 +113,17 @@ export default function SubscriberPage() {
               borderRadius: "6px",
             }}
           >
-            <TableContainer sx={{height: 1, overflow: "auto"}}>
+            <TableContainer sx={{ height: 1, overflow: "auto" }}>
               <Table size="medium">
-                <TableHeader/>
+                <TableHeader />
 
                 <TableBody>
                   {loadStatus === "success" ? (
-                    <Suspense fallback={<TableLoading status={loadStatus}/>}>
-                      <ArtistTable/>
+                    <Suspense fallback={<TableLoading status={loadStatus} />}>
+                      <ArtistTable />
                     </Suspense>
                   ) : (
-                    <TableLoading status={loadStatus}/>
+                    <TableLoading status={loadStatus} />
                   )}
                 </TableBody>
               </Table>

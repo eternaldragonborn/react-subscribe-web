@@ -1,7 +1,7 @@
-import {Lock} from "@mui/icons-material";
-import {Link, TableCell, TableRow} from "@mui/material";
-import {discordOauthURL} from "../../constants";
-import {IconHeader} from "../Utils";
+import { Lock } from "@mui/icons-material";
+import { Link, TableCell, TableRow } from "@mui/material";
+import { discordOauthURL } from "../../constants";
+import { IconHeader } from "../Utils";
 
 export default function TableNotLogin() {
   return (

@@ -1,16 +1,16 @@
-import {Collapse, Stack, TextField} from "@mui/material";
-import {FormikErrors, useFormik} from "formik";
-import {useCallback, useContext, useEffect} from "react";
-import {TransitionGroup} from "react-transition-group";
+import { Collapse, Stack, TextField } from "@mui/material";
+import { FormikErrors, useFormik } from "formik";
+import { useCallback, useContext, useEffect } from "react";
+import { TransitionGroup } from "react-transition-group";
 import * as yup from "yup";
-import {FieldArtist, FormArtist} from "../../../types";
+import { FieldArtist, FormArtist } from "../../../types";
 import {
   apiRequest,
   AuthContext,
   getRequestError,
   SubscriberPageContext,
 } from "../../constants";
-import {FormDialog, FormFieldChange, useFormDialog} from "../Forms";
+import { FormDialog, FormFieldChange, useFormDialog } from "../Forms";
 
 const validationSchema = yup.object({
   artists: yup.array().of(
@@ -20,9 +20,9 @@ const validationSchema = yup.object({
     }),
   ),
 });
-const initialValue: FieldArtist = {name: "", mark: ""};
+const initialValue: FieldArtist = { name: "", mark: "" };
 
-export default function ModalEditArtist({id}: { id: string }) {
+export default function ModalEditArtist({ id }: { id: string }) {
   const {
     useArtistEdit: [artistData, setArtistData],
     useSelected: [, setSelected],
@@ -30,7 +30,7 @@ export default function ModalEditArtist({id}: { id: string }) {
   const {
     useSubscribeData: [data, setData],
   } = useContext(AuthContext);
-  const {open, setOpen, onClose, useSubmitResult} =
+  const { open, setOpen, onClose, useSubmitResult } =
     useFormDialog<HTMLDivElement>();
   const formik = useFormik<FormArtist>({
     initialValues: {
@@ -56,17 +56,17 @@ export default function ModalEditArtist({id}: { id: string }) {
         })
         .then((res) => {
           if (res.data) {
-            setData({...data, artists: res.data});
+            setData({ ...data, artists: res.data });
             setResult({
               status: "success",
               action,
             });
-          } else setResult({status: "warning", action});
+          } else setResult({ status: "warning", action });
           setSelected([]);
           onClose();
         })
         .catch((err) => {
-          setResult({status: "error", action, reason: getRequestError(err)});
+          setResult({ status: "error", action, reason: getRequestError(err) });
         });
     },
   });
@@ -83,7 +83,7 @@ export default function ModalEditArtist({id}: { id: string }) {
   // reset fields
   useEffect(() => {
     if (artistData.type && artistData.type !== "delete") {
-      formik.setTouched({artists: []});
+      formik.setTouched({ artists: [] });
 
       if (artistData.type === "edit") {
         formik.setValues({
@@ -122,7 +122,7 @@ export default function ModalEditArtist({id}: { id: string }) {
       useSubmitResult={useSubmitResult}
       onClose={() => {
         onClose();
-        setArtistData({type: null});
+        setArtistData({ type: null });
       }}
       open={open}
       disableSubmit={!isDirty()}

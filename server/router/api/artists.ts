@@ -15,7 +15,11 @@ import {
   verifyIsManager,
 } from "../../modules";
 import { Subscriber, Artist } from "../../entity";
-import { NotFoundError, wrap } from "@mikro-orm/core";
+import {
+  NotFoundError,
+  UniqueConstraintViolationException,
+  wrap,
+} from "@mikro-orm/core";
 
 const artists = Router();
 
@@ -37,7 +41,10 @@ artists
 
       await db.postgreEm.insertMany(Artist, newArtists).catch((err) => {
         logger.error("新增繪師時發生錯誤\n" + err);
-        throw Error("新增錯誤，可能因資料庫中已有該繪師");
+        if (err instanceof UniqueConstraintViolationException) {
+          throw Error("資料庫中已有該繪師資料，如需更改訂閱者請告知管理員");
+        }
+        throw Error("資料庫發生錯誤");
       });
       logger.debug(
         "Artists [" + form.artists.map((artist) => artist.name) + "] added.",
@@ -95,7 +102,7 @@ artists
   // update artist
   .notify(upload.array("attachments[]"), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
-    const em = db.postgreEm;
+    const em = db.postgreEm.fork();
     let status = Status[form.status];
 
     try {
@@ -162,12 +169,13 @@ artists
   // change subscriber
   .merge(upload.none(), verifyIsManager, async (req, res, next) => {
     const form: FormUpdate = req.body;
+    const em = db.postgreEm.fork();
     logger.debug(JSON.stringify(form, null, 2));
 
     try {
       // attempt to get new subscriber data
       let [newSubscriber, error] = await asyncExecute(
-        db.postgreEm.findOneOrFail(Subscriber, {
+        em.findOneOrFail(Subscriber, {
           id: form.subscriber,
         }),
       );
@@ -182,7 +190,7 @@ artists
 
       // update artists data
       [, error] = await asyncExecute(
-        db.postgreEm
+        em
           .createQueryBuilder(Artist)
           .update({
             subscriber: newSubscriber,
@@ -215,9 +223,10 @@ artists
   // delete artist
   .delete(upload.none(), verifyForm, async (req, res, next) => {
     const form: FormUpdate = req.body;
+    const em = db.postgreEm.fork();
 
     try {
-      await db.postgreEm
+      await em
         .createQueryBuilder(Artist)
         .delete()
         .where({ artist: { $in: form.artist } })

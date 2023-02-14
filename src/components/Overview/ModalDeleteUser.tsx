@@ -1,5 +1,5 @@
-import {Delete} from "@mui/icons-material";
-import {LoadingButton} from "@mui/lab";
+import { Delete } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
   Autocomplete,
   DialogContent,
@@ -8,20 +8,20 @@ import {
   useTheme,
 } from "@mui/material";
 import Button from "@mui/material/Button";
-import {useFormik} from "formik";
-import {useCallback, useContext, useEffect, useState} from "react";
+import { useFormik } from "formik";
+import { useCallback, useContext, useEffect, useState } from "react";
 import * as yup from "yup";
-import {apiRequest, AuthContext, getRequestError} from "../../constants";
-import {FormDialog, useFormDialog} from "../Forms";
+import { apiRequest, AuthContext, getRequestError } from "../../constants";
+import { FormDialog, useFormDialog } from "../Forms";
 
 type SubscriberOption = { name: string | undefined; id: string | undefined };
-const initialOption: SubscriberOption = {name: undefined, id: undefined};
+const initialOption: SubscriberOption = { name: undefined, id: undefined };
 
 function ModalConfirm({
-                        subscriber,
-                        submitForm,
-                        isSubmitting,
-                      }: {
+  subscriber,
+  submitForm,
+  isSubmitting,
+}: {
   subscriber: string | undefined;
   submitForm: () => Promise<void>;
   isSubmitting: boolean;
@@ -86,7 +86,7 @@ export default function ModalDeleteUser() {
   const {
     useSubscribeData: [data, setData],
   } = useContext(AuthContext);
-  const {open, onOpen, onClose, useSubmitResult} = useFormDialog();
+  const { open, onOpen, onClose, useSubmitResult } = useFormDialog();
   const [options, setOptions] = useState<SubscriberOption[]>([]);
   const [selected, setSelected] = useState<SubscriberOption | null>(
     initialOption,
@@ -100,18 +100,18 @@ export default function ModalDeleteUser() {
     }),
     onSubmit: async (values) => {
       const [, setResult] = useSubmitResult;
-      await apiRequest({method: "DELETE", url: "/subscriber", data: values})
+      await apiRequest({ method: "DELETE", url: "/subscriber", data: values })
         .then((res) => {
           if (res.data) {
             setSelected(initialOption);
-            setResult({action, status: "success"});
-            setData({...res.data});
-          } else setResult({action, status: "warning"});
+            setResult({ action, status: "success" });
+            setData({ ...res.data });
+          } else setResult({ action, status: "warning" });
 
           onClose();
         })
         .catch((err) =>
-          setResult({action, status: "error", reason: getRequestError(err)}),
+          setResult({ action, status: "error", reason: getRequestError(err) }),
         );
     },
   });
@@ -126,7 +126,7 @@ export default function ModalDeleteUser() {
 
   // options initialize
   useEffect(() => {
-    const options: SubscriberOption[] = [{name: undefined, id: undefined}];
+    const options: SubscriberOption[] = [{ name: undefined, id: undefined }];
     for (let subscriber in data?.subscribers) {
       options.push({
         id: subscriber,
@@ -139,7 +139,7 @@ export default function ModalDeleteUser() {
 
   return (
     <>
-      <Button color="error" startIcon={<Delete/>} onClick={() => onOpen()}>
+      <Button color="error" startIcon={<Delete />} onClick={() => onOpen()}>
         刪除訂閱者
       </Button>
 
@@ -159,7 +159,7 @@ export default function ModalDeleteUser() {
         }
       >
         <DialogContentText pb={2}>
-          <span style={{fontWeight: "bold", color: "red"}}>
+          <span style={{ fontWeight: "bold", color: "red" }}>
             該動作無法復原
           </span>
           ，拔除訂閱者身分組即可禁止其瀏覽網址資訊且不需刪除資料，請再次確認是否需要刪除資料。
@@ -193,13 +193,13 @@ export default function ModalDeleteUser() {
         />
 
         <DialogContentText display={artists()?.length ? "block" : "none"}>
-          <span style={{fontWeight: "bold"}}>
+          <span style={{ fontWeight: "bold" }}>
             <span
-              style={{color: "red", fontSize: theme.typography.fontSize + 2}}
+              style={{ color: "red", fontSize: theme.typography.fontSize + 2 }}
             >
               以下繪師資料也將被刪除：
             </span>
-            <br/>
+            <br />
 
             {artists()?.join("、")}
           </span>

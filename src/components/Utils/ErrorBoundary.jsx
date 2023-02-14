@@ -1,17 +1,17 @@
-import {Block} from "@mui/icons-material";
-import {Container, Link} from "@mui/material";
-import {Component} from "react";
-import {IconHeader} from "./Icons";
+import { Block } from "@mui/icons-material";
+import { Container, Link } from "@mui/material";
+import { Component } from "react";
+import { IconHeader } from "./Icons";
 
 export class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = {hasError: false};
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error) {
     // 更新 state 以至於下一個 render 會顯示 fallback UI
-    return {hasError: true};
+    return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {

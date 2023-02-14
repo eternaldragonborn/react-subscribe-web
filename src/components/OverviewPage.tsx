@@ -1,4 +1,4 @@
-import {Close, Search} from "@mui/icons-material";
+import { Close, Search } from "@mui/icons-material";
 import {
   alpha,
   CircularProgress,
@@ -21,11 +21,11 @@ import {
   useState,
 } from "react";
 
-import {ArtistData} from "../../server/constant";
-import {AuthContext} from "../constants";
-import {tableSortReducer} from "../reducers";
-import {TableHeader} from "./Overview";
-import {ErrorBoundary, TableLoading} from "./Utils";
+import { ArtistData } from "../../server/constant";
+import { AuthContext } from "../constants";
+import { tableSortReducer } from "../reducers";
+import { TableHeader } from "./Overview";
+import { ErrorBoundary, TableLoading } from "./Utils";
 
 const Toolbar = lazy(() => import("./Overview/Toolbar"));
 const ModalDeleteUser = lazy(() => import("./Overview/ModalDeleteUser"));
@@ -53,11 +53,11 @@ export default function Overview() {
     clearTimeout(timeoutRef.current);
 
     if (!searchWord) {
-      sortStateDispatch({type: "CLEAR_SEARCH"});
+      sortStateDispatch({ type: "CLEAR_SEARCH" });
       return;
     }
 
-    sortStateDispatch({type: "START_SEARCH", value: searchWord});
+    sortStateDispatch({ type: "START_SEARCH", value: searchWord });
 
     const regex = new RegExp(`${searchWord}`, "i");
     const isMatch = (data: ArtistData) => {
@@ -87,7 +87,7 @@ export default function Overview() {
 
   useEffect(() => {
     if (subscribeData) {
-      sortStateDispatch({type: "SET_DATA", data: subscribeData.artists});
+      sortStateDispatch({ type: "SET_DATA", data: subscribeData.artists });
       setLoadState("success");
     }
   }, [subscribeData]);
@@ -96,10 +96,10 @@ export default function Overview() {
     <Container>
       <Stack direction="row" pb={1} spacing={1}>
         <Suspense>
-          {user?.status === "manager" && subscribeData && <ModalDeleteUser/>}
-          {subscribeData && user?.status !== "user" && <Toolbar/>}
+          {user?.status === "manager" && subscribeData && <ModalDeleteUser />}
+          {subscribeData && user?.status !== "user" && <Toolbar />}
         </Suspense>
-        <UrlModal useModalData={[modalData, setModalData]}/>
+        <UrlModal useModalData={[modalData, setModalData]} />
       </Stack>
 
       <Stack // search box
@@ -115,22 +115,22 @@ export default function Overview() {
           alignItems: "center",
         }}
       >
-        <label htmlFor="search-box" style={{alignItems: "center"}}>
-          <Search sx={{px: 0.5}}/>
+        <label htmlFor="search-box" style={{ alignItems: "center" }}>
+          <Search sx={{ px: 0.5 }} />
         </label>
         <InputBase
           id="search-box"
-          sx={{flexGrow: 1}}
+          sx={{ flexGrow: 1 }}
           placeholder="搜尋..."
           value={searchWord}
           onChange={(e) => setSearchWord(e.target.value)}
         />
 
         {sortState.searching ? (
-          <CircularProgress size="20px"/>
+          <CircularProgress size="20px" />
         ) : (
           <Close
-            sx={{color: (theme) => theme.palette.grey[700]}}
+            sx={{ color: (theme) => theme.palette.grey[700] }}
             onClick={() => setSearchWord("")}
           />
         )}
@@ -143,18 +143,18 @@ export default function Overview() {
             borderRadius: "6px",
           }}
         >
-          <TableContainer sx={{height: "80vh", overflow: "auto"}}>
-            <Table stickyHeader size="medium" sx={{height: "100%"}}>
-              <TableHeader useSortState={[sortState, sortStateDispatch]}/>
+          <TableContainer sx={{ height: "80vh", overflow: "auto" }}>
+            <Table stickyHeader size="medium" sx={{ height: "100%" }}>
+              <TableHeader useSortState={[sortState, sortStateDispatch]} />
 
               <TableBody>
-                <Suspense fallback={<TableLoading status="loading"/>}>
+                <Suspense fallback={<TableLoading status="loading" />}>
                   {user ? (
                     <OverviewTableBody
-                      {...{sortState, searchWord, loadState, setModalData}}
+                      {...{ sortState, searchWord, loadState, setModalData }}
                     />
                   ) : (
-                    <TableNotLogin/>
+                    <TableNotLogin />
                   )}
                 </Suspense>
               </TableBody>

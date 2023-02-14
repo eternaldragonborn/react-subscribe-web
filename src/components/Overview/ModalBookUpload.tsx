@@ -11,11 +11,11 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import {FormikErrors, useFormik} from "formik";
-import {useCallback, useState} from "react";
+import { FormikErrors, useFormik } from "formik";
+import { useCallback, useState } from "react";
 import * as yup from "yup";
-import {FieldBook} from "../../../types";
-import {apiRequest, getFormData} from "../../constants";
+import { FieldBook } from "../../../types";
+import { apiRequest, getFormData } from "../../constants";
 import {
   FileUpload,
   FormDialog,
@@ -42,12 +42,12 @@ const validationSchema = yup.object({
 const action = "本本上傳";
 
 export function ModalBookUpload() {
-  const {open, onOpen, onClose, useSubmitResult} = useFormDialog();
+  const { open, onOpen, onClose, useSubmitResult } = useFormDialog();
   const [fieldNum, setFieldNum] = useState(0);
   const [progress, setProgress] = useState(0);
   const formik = useFormik<{ books: FieldBook[] }>({
     validationSchema,
-    initialValues: {books: [initialValue]},
+    initialValues: { books: [initialValue] },
     onSubmit: async (values) => {
       let failedCount = 0;
       const [, setResult] = useSubmitResult;
@@ -59,8 +59,7 @@ export function ModalBookUpload() {
 
         await apiRequest
           .post("/subscriber/book", data)
-          .then(() => {
-          })
+          .then(() => {})
           .catch((err) => {
             failedCount++;
           })
@@ -71,7 +70,7 @@ export function ModalBookUpload() {
       // TODO: show failresult
       if (failedCount === values.books.length)
         // add failed
-        setResult({status: "error", action, reason: ""});
+        setResult({ status: "error", action, reason: "" });
       else if (failedCount)
         // partical failed
         setResult({
@@ -83,7 +82,7 @@ export function ModalBookUpload() {
         });
       else {
         // success
-        setResult({status: "success", action});
+        setResult({ status: "success", action });
         onClose();
       }
     },
@@ -107,7 +106,7 @@ export function ModalBookUpload() {
     <>
       <Button
         color="info"
-        startIcon={<UploadFileRounded/>}
+        startIcon={<UploadFileRounded />}
         onClick={() => {
           setFieldNum(0);
           setProgress(0);
@@ -150,7 +149,7 @@ export function ModalBookUpload() {
             onClick={() => setFieldNum(fieldNum - 1)}
             disabled={fieldNum === 0}
           >
-            <NavigateBefore/>
+            <NavigateBefore />
           </IconButton>
 
           {/* <TransitionGroup>
@@ -213,7 +212,7 @@ export function ModalBookUpload() {
             onClick={() => setFieldNum(fieldNum + 1)}
             disabled={fieldNum === formik.values.books.length - 1}
           >
-            <NavigateNext/>
+            <NavigateNext />
           </IconButton>
         </Stack>
 

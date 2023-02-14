@@ -1,10 +1,10 @@
-import {QuestionMark} from "@mui/icons-material";
-import {CircularProgress, TableCell, TableRow} from "@mui/material";
-import {lazy, useContext} from "react";
+import { QuestionMark } from "@mui/icons-material";
+import { CircularProgress, TableCell, TableRow } from "@mui/material";
+import { lazy, useContext } from "react";
 
-import {AuthContext, SortState} from "../../constants";
-import {theme} from "../../styles/theme";
-import {IconHeader, TableLoading} from "../Utils";
+import { AuthContext, SortState } from "../../constants";
+import { theme } from "../../styles/theme";
+import { IconHeader, TableLoading } from "../Utils";
 
 const Row = lazy(() =>
   window.screen.width >= theme.breakpoints.values["md"]
@@ -13,11 +13,11 @@ const Row = lazy(() =>
 );
 
 export default function OverviewTableBody({
-                                            sortState,
-                                            searchWord,
-                                            loadState,
-                                            setModalData,
-                                          }: {
+  sortState,
+  searchWord,
+  loadState,
+  setModalData,
+}: {
   sortState: SortState;
   searchWord: string;
   loadState: string;
@@ -33,7 +33,7 @@ export default function OverviewTableBody({
         return (
           <TableRow>
             <TableCell colSpan={8} align="center">
-              <CircularProgress/>
+              <CircularProgress />
             </TableCell>
           </TableRow>
         );
@@ -58,7 +58,7 @@ export default function OverviewTableBody({
         // no search result
         <TableRow>
           <TableCell colSpan={8} align="center">
-            <IconHeader icon={QuestionMark} header="無符合的搜尋條件"/>
+            <IconHeader icon={QuestionMark} header="無符合的搜尋條件" />
           </TableCell>
         </TableRow>
       );
@@ -79,5 +79,5 @@ export default function OverviewTableBody({
           ))}
         </>
       );
-  } else return <TableLoading status={loadState}/>;
+  } else return <TableLoading status={loadState} />;
 }

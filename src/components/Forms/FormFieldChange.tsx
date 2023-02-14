@@ -1,18 +1,18 @@
-import {Add, Remove} from "@mui/icons-material";
-import {DialogContentText, ButtonGroup, Button, Stack} from "@mui/material";
-import {FormikTouched} from "formik";
+import { Add, Remove } from "@mui/icons-material";
+import { DialogContentText, ButtonGroup, Button, Stack } from "@mui/material";
+import { FormikTouched } from "formik";
 
 export function FormFieldChange<T>({
-                                     values,
-                                     initialValue,
-                                     fieldName,
-                                     setFieldValue,
-                                     touched,
-                                     resetTouched,
-                                     maxField,
-                                     onAdd,
-                                     onRemove,
-                                   }: {
+  values,
+  initialValue,
+  fieldName,
+  setFieldValue,
+  touched,
+  resetTouched,
+  maxField,
+  onAdd,
+  onRemove,
+}: {
   values: T[];
   fieldName: string;
   setFieldValue: (field: string, value: T[]) => Promise<any>;
@@ -35,7 +35,7 @@ export function FormFieldChange<T>({
             setFieldValue(fieldName, [...values, initialValue]);
           }}
         >
-          <Add fontSize="small"/>
+          <Add fontSize="small" />
         </Button>
 
         <Button // remove field
@@ -51,7 +51,7 @@ export function FormFieldChange<T>({
               resetTouched(`${fieldName}.${index}`, false);
           }}
         >
-          <Remove fontSize="small"/>
+          <Remove fontSize="small" />
         </Button>
       </ButtonGroup>
       <DialogContentText>點擊左方按鈕可新增或減少欄位</DialogContentText>

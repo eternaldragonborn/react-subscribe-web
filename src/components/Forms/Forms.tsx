@@ -1,4 +1,4 @@
-import {LoadingButton} from "@mui/lab";
+import { LoadingButton } from "@mui/lab";
 import {
   Alert,
   AlertTitle,
@@ -14,9 +14,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import {ReactNode, useCallback, useEffect, useRef, useState} from "react";
-import {State} from "../../constants";
-import {ErrorBoundary} from "../Utils";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { State } from "../../constants";
+import { ErrorBoundary } from "../Utils";
 
 //#region request result define
 interface RequestResult {
@@ -37,12 +37,12 @@ type SubmitResult = ErrorResult | NormalResult | { status: undefined };
 
 //#endregion
 
-function ResultSnackbar({useResult}: { useResult: State<SubmitResult> }) {
+function ResultSnackbar({ useResult }: { useResult: State<SubmitResult> }) {
   const [submitResult, setSubmitResult] = useResult;
   const [open, setOpen] = useState(false);
   const onClose = useCallback(() => {
     setOpen(false);
-    setSubmitResult({status: undefined});
+    setSubmitResult({ status: undefined });
   }, [setSubmitResult]);
 
   useEffect(() => {
@@ -91,18 +91,18 @@ interface FormDialogProps extends DialogProps {
 }
 
 export const FormDialog = ({
-                             title,
-                             onClose,
-                             submitForm,
-                             isSubmitting,
-                             useSubmitResult,
-                             action,
-                             confirmButton,
-                             contentDivider,
-                             spacing = 2,
-                             disableSubmit = false,
-                             ...dialogProps
-                           }: FormDialogProps) => {
+  title,
+  onClose,
+  submitForm,
+  isSubmitting,
+  useSubmitResult,
+  action,
+  confirmButton,
+  contentDivider,
+  spacing = 2,
+  disableSubmit = false,
+  ...dialogProps
+}: FormDialogProps) => {
   return (
     <>
       <Dialog
@@ -115,13 +115,13 @@ export const FormDialog = ({
         transitionDuration={dialogProps.transitionDuration ?? 350}
         TransitionComponent={dialogProps.TransitionComponent ?? Grow}
         disableEscapeKeyDown={isSubmitting}
-        TransitionProps={{unmountOnExit: true}}
+        TransitionProps={{ unmountOnExit: true }}
       >
         {title && (
           <DialogTitle>
             <Box display="flex" alignItems="center">
               <Typography
-                sx={{flexGrow: 1}}
+                sx={{ flexGrow: 1 }}
                 variant="inherit"
                 color="inherit"
               >
@@ -175,7 +175,7 @@ export const FormDialog = ({
         </DialogActions>
       </Dialog>
 
-      {useSubmitResult && <ResultSnackbar useResult={useSubmitResult}/>}
+      {useSubmitResult && <ResultSnackbar useResult={useSubmitResult} />}
     </>
   );
 };
