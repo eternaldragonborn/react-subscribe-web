@@ -1,15 +1,9 @@
 import { Cancel, CheckCircle } from "@mui/icons-material";
-import {
-  Backdrop,
-  CircularProgress,
-  Link,
-  Stack,
-  Typography,
-  Zoom,
-} from "@mui/material";
+import { Backdrop, CircularProgress, Link, Stack, Typography, Zoom } from "@mui/material";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { number } from "yup";
 import { AuthContext } from "../constants";
 import { IconHeader } from "./Utils";
 
@@ -49,7 +43,7 @@ export default function Authenticate() {
 
   // go back to overview after 5 sec
   useEffect(() => {
-    let tick;
+    let tick: ReturnType<typeof setInterval>;
     if (status !== "loading") {
       tick = setInterval(() => {
         setClock(clock - 1);
@@ -69,15 +63,9 @@ export default function Authenticate() {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
-      unselectable
     >
       {status === "loading" && (
-        <Stack
-          justifyContent={"center"}
-          alignItems="center"
-          spacing={0}
-          direction="column"
-        >
+        <Stack justifyContent={"center"} alignItems="center" spacing={0} direction="column">
           <CircularProgress size={"5rem"} />
           <Typography variant="h3" fontWeight={"bold"} color="white">
             驗證中...

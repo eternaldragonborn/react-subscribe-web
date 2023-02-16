@@ -15,11 +15,7 @@ import {
   verifyIsManager,
 } from "../../modules";
 import { Subscriber, Artist } from "../../entity";
-import {
-  NotFoundError,
-  UniqueConstraintViolationException,
-  wrap,
-} from "@mikro-orm/core";
+import { NotFoundError, UniqueConstraintViolationException, wrap } from "@mikro-orm/core";
 
 const artists = Router();
 
@@ -46,9 +42,7 @@ artists
         }
         throw Error("資料庫發生錯誤");
       });
-      logger.debug(
-        "Artists [" + form.artists.map((artist) => artist.name) + "] added.",
-      );
+      logger.debug("Artists [" + form.artists.map((artist) => artist.name) + "] added.");
     } catch (err: any) {
       res.status(405).send(err.message);
       return;
@@ -57,11 +51,7 @@ artists
     // notification
     const embed = await createEmbed("繪師新增", "GREEN", form.id);
     form.artists.forEach((artist, n) => {
-      embed.addField(
-        `繪師${n + 1}`,
-        inlineCode(artist.name),
-        Boolean(artist.mark),
-      );
+      embed.addField(`繪師${n + 1}`, inlineCode(artist.name), Boolean(artist.mark));
       if (artist.mark) embed.addField("備註", artist.mark, true);
     });
 
@@ -93,9 +83,7 @@ artists
       next();
     } catch (err: any) {
       res.status(405).send("資料庫發生錯誤。");
-      logger.error(
-        `修改繪師(${form.artists[0]?.artist})資料時發生錯誤\n` + err,
-      );
+      logger.error(`修改繪師(${form.artists[0]?.artist})資料時發生錯誤\n` + err);
     }
   })
 
@@ -128,31 +116,28 @@ artists
           inline: Boolean(form.mark),
         },
       ];
-      if (form.mark)
-        fields.push({ name: "備註", value: form.mark, inline: true });
-      if (form.file_link)
-        fields.push({ name: "檔案連結", value: form.file_link });
+      if (form.mark) fields.push({ name: "備註", value: form.mark, inline: true });
+      if (form.file_link) fields.push({ name: "檔案連結", value: form.file_link });
 
       let title: string, color: ColorResolvable;
       switch (status) {
-      case UpdateStatus.normal:
-        const subscriber = await db.postgreEm.findOneOrFail(Subscriber, {
-          id: form.id,
-        });
-        if (subscriber.preview)
-          fields.push({ name: "預覽", value: subscriber.preview });
-        fields.push({ name: "下載", value: subscriber.download });
-        title = "繪師更新";
-        color = "BLUE";
-        break;
-      case UpdateStatus.noUpdate:
-        title = "繪師停更";
-        color = "DARK_GREY";
-        break;
-      case UpdateStatus.unSubscribed:
-        title = "繪師取消訂閱";
-        color = "DARK_RED";
-        break;
+        case UpdateStatus.normal:
+          const subscriber = await em.findOneOrFail(Subscriber, {
+            id: form.id,
+          });
+          if (subscriber.preview) fields.push({ name: "預覽", value: subscriber.preview });
+          fields.push({ name: "下載", value: subscriber.download });
+          title = "繪師更新";
+          color = "BLUE";
+          break;
+        case UpdateStatus.noUpdate:
+          title = "繪師停更";
+          color = "DARK_GREY";
+          break;
+        case UpdateStatus.unSubscribed:
+          title = "繪師取消訂閱";
+          color = "DARK_RED";
+          break;
       }
       const embed = await createEmbed(title!, color!, form.id);
       embed.addFields(fields);

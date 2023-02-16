@@ -1,24 +1,8 @@
 import { Add } from "@mui/icons-material";
-import {
-  Button,
-  Container,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableContainer,
-} from "@mui/material";
-import {
-  lazy,
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from "react";
+import { Button, Container, Paper, Stack, Table, TableBody, TableContainer } from "@mui/material";
+import { lazy, Suspense, useCallback, useContext, useEffect, useReducer, useState } from "react";
 import { useParams } from "react-router-dom";
-import { AuthContext, SubscriberPageContext } from "../constants";
+import { AuthContext, EditAction, SubscriberPageContext } from "../constants";
 import { tableSortReducer } from "../reducers";
 import { ModalEditUrl, TableHeader } from "./Subscriber";
 import { ErrorBoundary, TableLoading } from "./Utils";
@@ -40,13 +24,10 @@ export default function SubscriberPage() {
     column: "updateDate",
     direction: "desc",
   });
-  const [selected, setSelected] = useState([]);
-  const useArtistEdit = useState({ type: null });
+  const [selected, setSelected] = useState<string[]>([]);
+  const useArtistEdit = useState<EditAction>({ type: null });
   const [, setArtistData] = useArtistEdit;
-  const urls = useCallback(
-    () => subscribeData?.subscribers[id],
-    [id, subscribeData],
-  );
+  const urls = useCallback(() => subscribeData?.subscribers[id], [id, subscribeData]);
   //#endregion
 
   //#region effects
@@ -65,8 +46,7 @@ export default function SubscriberPage() {
         return data.id === id;
       });
 
-      if (`<@${user.id}>` !== id && user.status !== "manager")
-        setLoadStatus("forbidden");
+      if (`<@${user.id}>` !== id && user.status !== "manager") setLoadStatus("forbidden");
       else {
         sortDispatch({ type: "SET_DATA", data });
         setLoadStatus("success");

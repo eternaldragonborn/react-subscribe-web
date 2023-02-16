@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-  ArtistData,
-  SubscribeData as SubscribeDataType,
-} from "../../server/constant";
+import { ArtistData, SubscribeData as SubscribeDataType } from "../../server/constant";
 
 export type State<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
@@ -39,11 +36,12 @@ type ClearSearch = {
   type: "CLEAR_SEARCH";
 };
 
-export type SortAction =
-  | SetSortData
-  | ChangeSort
-  | StartSearch
-  | EndSearch
-  | ClearSearch;
+export type SortAction = SetSortData | ChangeSort | StartSearch | EndSearch | ClearSearch;
 
 export type LoadStatus = "loading" | "failed" | "success" | "forbidden";
+
+export type EditAction = {
+  type: "edit" | "add" | "delete" | null;
+  artist?: string;
+  mark?: string;
+};

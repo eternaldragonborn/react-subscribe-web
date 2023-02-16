@@ -16,6 +16,7 @@ rules:
   indent:
     - error
     - 2
+    - SwitchCase: 1
   linebreak-style:
     - error
     - windows
@@ -27,9 +28,9 @@ rules:
     - always
   no-case-declarations:
     - off
-  space-before-function-paren:
-    - warning
   keyword-spacing:
-    - warning
+    - warn
   comma-spacing:
-    - warning
+    - warn
+  react/react-in-jsx-scope:
+    - off

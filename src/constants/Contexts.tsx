@@ -1,11 +1,5 @@
 import * as React from "react";
-import type {
-  SortState,
-  State,
-  SubscribeData,
-  Reducer,
-  SortAction,
-} from "./types";
+import type { SortState, State, SubscribeData, Reducer, SortAction, EditAction } from "./types";
 
 export interface UserData {
   id: string;
@@ -13,8 +7,8 @@ export interface UserData {
 }
 
 interface AuthContextType {
-  useUser: State<UserData>;
-  useSubscribeData: State<SubscribeData>;
+  useUser: State<UserData | undefined>;
+  useSubscribeData: State<SubscribeData | undefined>;
 }
 
 export const AuthContext = React.createContext<AuthContextType>(undefined!);
@@ -22,13 +16,8 @@ export const AuthContext = React.createContext<AuthContextType>(undefined!);
 interface SubscriberPageContextType {
   useSort: Reducer<SortState, SortAction>;
   useSelected: State<string[]>;
-  useArtistEdit: State<{
-    type: "edit" | "add" | "delete" | null;
-    artist?: string;
-    mark?: string;
-  }>;
+  useArtistEdit: State<EditAction>;
   // id: string;
 }
 
-export const SubscriberPageContext =
-  React.createContext<SubscriberPageContextType>(undefined!);
+export const SubscriberPageContext = React.createContext<SubscriberPageContextType>(undefined!);
